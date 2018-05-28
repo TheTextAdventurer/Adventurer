@@ -1,0 +1,36 @@
+﻿                    //move = null;
+                    //switch (Console.ReadKey(true).Key)
+                    //{
+                    //    case ConsoleKey.NumPad8:
+                    //        move = "GO NORTH";
+                    //        break;
+
+                    //    case ConsoleKey.NumPad2:
+                    //        move = "GO SOUTH";
+                    //        break;
+
+                    //    case ConsoleKey.NumPad6:
+                    //        move = "GO EAST";
+                    //        break;
+
+                    //    case ConsoleKey.NumPad4:
+                    //        move = "GO WEST";
+                    //        break;
+
+                    //    case ConsoleKey.NumPad9:
+                    //        move = "GO UP";
+                    //        break;
+
+                    //    case ConsoleKey.NumPad3:
+                    //        move = "GO DOWN";
+                    //        break;
+
+                    //}
+
+                    //if (move != null)
+                    //{    
+                    //    Console.Write(move.ToLower());
+                    //    Thread.Sleep(750);
+                    //    Advent.ProcessText(move);
+                    //}
+                    //else
