@@ -172,7 +172,7 @@ namespace Adventurer
                 ErrorBox(6, 6, 70, 10, e.Message);
             }
 
-            _RobotOutput.Save(_RobotFile);
+            _RobotOutput.Save(_RobotFile +".robot");
 
             //write the final bar
             string exitmsg = "-Press enter to exit-";
@@ -195,7 +195,7 @@ namespace Adventurer
         {
             if (_NewInput)
             {
-                _RobotTimer.Stop();
+                _RobotTimer.Stop(); //The time at which the first keypress of the new turn begins
                 _NewInput = false;
             }
         }
