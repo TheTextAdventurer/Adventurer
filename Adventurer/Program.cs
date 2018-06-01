@@ -2,26 +2,63 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using System.Diagnostics;
+using System.IO;
+using System.Xml.Linq;
 
 namespace Adventurer
 {
     class Program
     {
+        /// <summary>
+        /// View of curent room
+        /// </summary>
         static string _GameView;
+
+        /// <summary>
+        /// Message returned by game
+        /// </summary>
         static string _GameMessage;
+
+        /// <summary>
+        /// Display the turn counter, set by flag
+        /// </summary>
         static bool _TurnCounter;
 
-        /*
-         *  -l
-         *  -g
-         *  -x
-         *  -x1
-         * 
-         */
+        /// <summary>
+        /// Is robot mode enabled
+        /// </summary>
+        static bool _Robot;
 
-        static string[] flags = { "-l", "-g", "-f", "-r", "-t","-h" };
+        /// <summary>
+        /// Robot timer
+        /// </summary>
+        static Stopwatch _RobotTimer;
 
+        /// <summary>
+        /// User input, recorded after keypress
+        /// </summary>
+        static bool _NewInput = false;
+
+        /// <summary>
+        /// Name of robot output file
+        /// </summary>
+        static string _RobotFile = null;
+
+        /// <summary>
+        /// Robot data stored here
+        /// </summary>
+        static XElement _RobotOutput;
+
+        //load save game/load game/output friendly xml/output raw xml/display turn counter/show help/robot
+        static string[] flags = { "-l", "-g", "-f", "-r", "-t","-h","-b" };
+
+        /// <summary>
+        /// Returns the argument provided with the specified flag
+        /// </summary>
+        /// <param name="pFlag">Flag being sought</param>
+        /// <param name="pArgs">Complete list of arguments</param>
+        /// <returns>Flag argument</returns>
         static string getFlagArg(string pFlag, string[] pArgs)
         {
             string match = pArgs.SkipWhile(a => !a.StartsWith(pFlag))
@@ -37,72 +74,94 @@ namespace Adventurer
         static void Main(string[] args)
         {
             Console.Clear();
+            
             Advent.GameView += Advent_GameView;
             Advent.GameOutput += Advent_GameOutput;
-
             string arg;
             string arg1;
-
-            if (args.Length == 0
-                    || args.Select(a=> a.Length > 1 ? a.Substring(0,2) : a).ToArray().Intersect(flags).Count() == 0
-                    || getFlagArg(flags[5], args) != null
-                    )
-            {
-                OutputHelp();
-                return;
-            }
-            else if ((arg=getFlagArg(flags[3], args)) != null) //raw XML output
-            {
-                Advent.LoadGame(arg);
-                Advent.SaveAsUnFormattedXML(arg);
-                return;
-            }
-            else if ((arg=getFlagArg(flags[2], args)) != null) //formatted output
-            {
-                Advent.LoadGame(arg);
-                Advent.SaveAsFormattedXML();
-                return;
-            }
-
-
-
-
-            arg = getFlagArg(flags[1], args);//load game
-            arg1 = getFlagArg(flags[0], args);//restore save
-            _TurnCounter = getFlagArg(flags[4], args) != null;
-            if (arg != null)
-            {
-                if (arg1 != null)
-                {
-                    Advent.RestoreGame(arg, arg1);
-                }
-                else
-                    Advent.LoadGame(arg);
-            }
-            else
-            {
-                Console.WriteLine("ERROR: Must specify game to load with -g");
-                OutputHelp();
-                return;
-            }
-
-            //
-           
-
-
+            string userInput = null;
+            
 
             try
             {
+                #region Process arguments
+
+                //no args provided or no recognised args
+                if (args.Length == 0
+                        || args.Select(a => a.Length > 1 ? a.Substring(0, 2) : a).ToArray().Intersect(flags).Count() == 0
+                        || getFlagArg(flags[5], args) != null)
+                {
+                    OutputHelp();
+                    return;
+                }
+                else if ((arg = getFlagArg(flags[3], args)) != null) //raw XML output of specified game file
+                {
+                    Advent.LoadGame(arg);
+                    Advent.SaveAsUnFormattedXML(arg);
+                    return;
+                }
+                else if ((arg = getFlagArg(flags[2], args)) != null) //formatted output of specified game file
+                {
+                    Advent.LoadGame(arg);
+                    Advent.SaveAsFormattedXML();
+                    return;
+                }
+
+                arg = getFlagArg(flags[1], args);//Game to load
+                arg1 = getFlagArg(flags[0], args);//Save game to restore
+                _TurnCounter = getFlagArg(flags[4], args) != null;
+                if (arg != null)
+                {
+                    if (arg1 != null)
+                    {
+                        Advent.RestoreGame(arg, arg1);  //restore save game
+                    }
+                    else
+                        Advent.LoadGame(arg);   //just load
+                }
+                else
+                {
+                    Console.WriteLine("ERROR: Must specify game to load with -g");
+                    OutputHelp();
+                    return;
+                }
 
 
+                //display turn counter
                 if (!_TurnCounter)
                     Console.Title = "Playing: " + Advent.GameName;
+
+                //Enable robot
+                _Robot = (_RobotFile = getFlagArg(flags[6], args)) != null;
+                if (_Robot)
+                {
+                    Console.CancelKeyPress += Console_CancelKeyPress;
+                    _RobotTimer = new Stopwatch();
+                    _RobotOutput = new XElement("AdventurerRobot", new XAttribute("Game", Advent.GameName));
+                    
+                }
+                #endregion
 
                 do
                 {
 
                     Console.Write(Advent.PlayerPrompt);
-                    Advent.ProcessText(Console.ReadLine().Trim());
+
+                    if (_Robot)
+                    {
+                        _RobotTimer.Start();
+                        _NewInput = true;
+                    }
+
+                    Advent.ProcessText(userInput = Console.ReadLine().Trim());
+
+                    if (_Robot)
+                    {
+                        _RobotTimer.Stop();
+                        _NewInput = true;
+                        _RobotOutput.Add(new XElement("Turn", new XAttribute("Input", userInput), new XAttribute("Delay", _RobotTimer.ElapsedMilliseconds)));
+                        _RobotTimer.Reset();
+                    }
 
                 } while (!Advent.ISGameOver);
 
@@ -112,6 +171,8 @@ namespace Adventurer
             {
                 ErrorBox(6, 6, 70, 10, e.Message);
             }
+
+            _RobotOutput.Save(_RobotFile);
 
             //write the final bar
             string exitmsg = "-Press enter to exit-";
@@ -123,6 +184,20 @@ namespace Adventurer
             Console.ResetColor();
             Console.Read();
             Console.Clear();
+        }
+
+        /// <summary>
+        ///  Record the time at which the first keypress occurs. Only used if robot mode enabled
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private static void Console_CancelKeyPress(object sender, ConsoleCancelEventArgs e)
+        {
+            if (_NewInput)
+            {
+                _RobotTimer.Stop();
+                _NewInput = false;
+            }
         }
 
         /// <summary>
@@ -152,6 +227,10 @@ namespace Adventurer
             Console.WriteLine();            
         }
 
+
+        /// <summary>
+        /// Display help screen
+        /// </summary>
         private static void OutputHelp()
         {
             Console.BackgroundColor = ConsoleColor.White;
@@ -176,6 +255,7 @@ namespace Adventurer
             Console.WriteLine("\t-f\tOutput specified game in commented XML -fAdv01.dat");
             Console.WriteLine("\t-r\tOutput specified game in XML -rAdv01.dat");
             Console.WriteLine("\t-h\tDisplay help");
+            Console.WriteLine("\t-b\tRecord game, must specify output name -bRecorded");
             Console.WriteLine();
             Console.WriteLine("This application is distributed under the GNU GENERAL PUBLIC LICENSE");
             Console.Write("Website: ");

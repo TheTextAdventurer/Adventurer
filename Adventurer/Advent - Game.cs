@@ -95,15 +95,6 @@ namespace Adventurer
                         _GameData.Items[o.Index].Location = pUndo ? (int)o.OldData : (int)o.NewData;
                         break;
 
-                    case GameData.ChangeItem.InputHistory:
-
-                        if (pUndo)
-                            _GameData.InputHistory = _GameData.InputHistory.Take(o.Index).ToList();
-                        else
-                            _GameData.InputHistory.Add((string)o.NewData);
-
-                        break;
-
                     case GameData.ChangeItem.BitFlag:
                         _GameData.BitFlags[o.Index] = (bool)(pUndo ? o.OldData : o.NewData);
                         break;
@@ -190,7 +181,6 @@ namespace Adventurer
 
             _GameData.BeginUndo();
             _GameData.TurnCounter++;
-            _GameData.AddInputHistory(pInput);
             SetGameOutput("", true);
 
             pInput = pInput.Trim();

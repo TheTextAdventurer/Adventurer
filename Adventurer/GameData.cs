@@ -43,7 +43,6 @@ namespace Adventurer
         public GameData()
         {
             RecordUndo = false;
-            InputHistory = new List<string>();
             TakeSuccessful = false;
             BitFlags = new bool[32];
             Counters = new int[32];
@@ -71,7 +70,6 @@ namespace Adventurer
                 //write header
                 sw.WriteLine(string.Format("\"{0}\"", this.GameName));
                 sw.WriteLine(this.Items.Count(i => i.Moved()));
-                sw.WriteLine(this.InputHistory.Count());
                 sw.WriteLine(this.BitFlags.Count());
                 sw.WriteLine(this.Counters.Count());
                 sw.WriteLine(this.SavedRooms.Count());
@@ -81,9 +79,6 @@ namespace Adventurer
                 this.Items.Select((item, indx) => new { item, indx })
                     .Where(i => i.item.Moved())
                     .All(i => { sw.WriteLine(i.indx); sw.WriteLine(i.item.Location); return true; });
-
-                this.InputHistory
-                    .All(i => { sw.WriteLine(string.Format("\"{0}\"", i)); return true; });
 
                 this.BitFlags.Select((bf, indx) => new { bf, indx })
                     .All(i => { sw.WriteLine(i.indx); sw.WriteLine(i.bf ? 1 : 0); return true; });
@@ -138,8 +133,6 @@ namespace Adventurer
             for (int i = 0; i < intarray.Length; i += 2)
                 gd.Items[intarray[i]].Location = intarray[i + 1];
 
-            gd.InputHistory.AddRange(Datafile.getTokens(header[1]));
-
             intarray = Datafile.GetTokensAsInt(header[2] * 2);
             for (int i = 0; i < intarray.Length; i += 2)
                 gd.BitFlags[intarray[i]] = intarray[i + 1] == 1;
@@ -193,11 +186,6 @@ namespace Adventurer
             gd.GameName = pFile;
             gd.CurrentRoom = gd.Header.StartRoom;
             gd.LampLife = gd.Header.LightDuration;
-
-
-
-            gd.InputHistory = new List<string>();
-
 
 
             int ctr = 0;
@@ -844,7 +832,6 @@ namespace Adventurer
         #region snapshot data
 
         public Item[] Items = null;
-        public List<string> InputHistory = null;
         public bool[] BitFlags = new bool[32];
         public int[] Counters = new int[32];
         public int[] SavedRooms = new int[32];
@@ -913,13 +900,6 @@ namespace Adventurer
             Items[pIndex].Location = pLocation;
         }
 
-        public void AddInputHistory(string pIH)
-        {
-            AddToCurrentUndoBlock(ChangeType.Insert, ChangeItem.InputHistory, ChangeItemDataType.String, (object)pIH, null, CurrentUndoBlock.Block.Count() - 1);
-            InputHistory.Add(pIH);
-
-        }
-
         public void ChangeBitFlag(int pIndex, bool pVal)
         {
             AddToCurrentUndoBlock(ChangeType.Update, ChangeItem.BitFlag, ChangeItemDataType.Bool, (object)pVal, (object)BitFlags[pIndex], pIndex);
@@ -958,7 +938,6 @@ namespace Adventurer
         public enum ChangeItem
         {
             Item
-            , InputHistory
             , BitFlag
             , Counter
             , SavedRooms
