@@ -172,7 +172,8 @@ namespace Adventurer
                 ErrorBox(6, 6, 70, 10, e.Message);
             }
 
-            _RobotOutput.Save(_RobotFile +".robot");
+            if (_Robot)
+                _RobotOutput.Save(_RobotFile +".robot");
 
             //write the final bar
             string exitmsg = "-Press enter to exit-";
