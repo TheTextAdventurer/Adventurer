@@ -4,6 +4,8 @@
     {
         public static string PlayerPrompt = "Tell me what to do: ";
 
+        private static int[] _InventoryLocations = { -1, 255 };
+
         enum _Constants : int
         {
             INVENTORY = -1,

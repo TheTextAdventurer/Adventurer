@@ -540,7 +540,7 @@ namespace Adventurer
             switch (pCon)
             {
                 case 1: //item carried
-                    retVal = _GameData.Items[pArg].Location == (int)_Constants.INVENTORY;
+                    retVal = _InventoryLocations.Contains(_GameData.Items[pArg].Location);
                     break;
 
                 case 2: //item in room with player
@@ -548,8 +548,7 @@ namespace Adventurer
                     break;
 
                 case 3: //item carried or in room with player
-                    retVal = _GameData.Items[pArg].Location == (int)_Constants.INVENTORY ||
-                        _GameData.Items[pArg].Location == _GameData.CurrentRoom;
+                    retVal = CheckCondition(1, pArg) || CheckCondition(2, pArg);
                     break;
 
                 case 4: //player in room X
@@ -561,7 +560,7 @@ namespace Adventurer
                     break;
 
                 case 6: //item not carried
-                    retVal = _GameData.Items[pArg].Location != (int)_Constants.INVENTORY;
+                    retVal = !_InventoryLocations.Contains(_GameData.Items[pArg].Location);
                     break;
 
                 case 7: //player not it room
@@ -577,14 +576,13 @@ namespace Adventurer
                     break;
 
                 case 10: //something carried
-                    return _GameData.Items.Count(i => i.Location == (int)_Constants.INVENTORY) > 0;
+                    return _GameData.Items.Count(i => _InventoryLocations.Contains(i.Location) == true) > 0;
 
                 case 11: //nothing carried
-                    return _GameData.Items.Count(i => i.Location == (int)_Constants.INVENTORY) == 0;
+                    return _GameData.Items.Count(i => _InventoryLocations.Contains(i.Location) == true) == 0;
 
                 case 12: //item not carried or in room with player
-                    retVal = _GameData.Items[pArg].Location != (int)_Constants.INVENTORY &
-                        _GameData.Items[pArg].Location != _GameData.CurrentRoom;
+                    retVal = CheckCondition(6, pArg) & CheckCondition(5, pArg);
                     break;
 
                 case 13: //item in game
@@ -673,7 +671,7 @@ namespace Adventurer
 
                     case 52: //get item, check if can carry
                         _GameData.TakeSuccessful = false;
-                        if (GetItemsAt((int)_Constants.INVENTORY).Count() < _GameData.Header.MaxCarry)
+                        if (GetItemsAt(_InventoryLocations).Count() < _GameData.Header.MaxCarry)
                         {
                             _GameData.Items[pArg1].Location = (int)_Constants.INVENTORY;
                             _GameData.TakeSuccessful = true;
@@ -777,8 +775,7 @@ namespace Adventurer
 
                     case 66: // output inventory
 
-                        string[] items = _GameData.Items
-                                        .Where(i => i.Location == (int)_Constants.INVENTORY)
+                        string[] items = GetItemsAt(_InventoryLocations)
                                         .Select(i => i.Description)
                                         .ToArray();
 
@@ -917,6 +914,16 @@ namespace Adventurer
         private static GameData.Item[] GetItemsAt(int pLocation)
         {
             return _GameData.Items.Where(i => i.Location == pLocation).ToArray();
+        }
+
+        /// <summary>
+        /// get the items at the specified location
+        /// </summary>
+        /// <param name="pLocation">RoomID</param>
+        /// <returns>Array of items</returns>
+        private static GameData.Item[] GetItemsAt(int[] pLocation)
+        {
+            return _GameData.Items.Where(i => pLocation.Contains(i.Location)).ToArray();
         }
 
         #endregion
