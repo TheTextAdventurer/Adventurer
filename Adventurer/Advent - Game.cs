@@ -763,11 +763,11 @@ namespace Adventurer
                         SetGameOutput(string.Format(
                                             _Sysmessages[13]
                                             , storedItems
-                                            , Math.Floor((storedItems * 1.0 / _GameData.Header.TotalTreasures) * 100)), true);
+                                            , Math.Floor((storedItems * 1.0 / _GameData.Header.TotalTreasures) * 100)), false);
 
                         if (storedItems == _GameData.Header.TotalTreasures)
                         {
-                            SetGameOutput(_Sysmessages[26], false);
+                            SetGameOutput(_Sysmessages[26], true);
                             PerformActionComponent(63, 0, 0);
                         }
 

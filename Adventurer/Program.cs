@@ -121,8 +121,7 @@ namespace Adventurer
                 }
                 else
                 {
-                    Console.WriteLine("ERROR: Must specify game to load with -g");
-                    OutputHelp();
+                    Console.WriteLine("ERROR: When using -l must specify game to load with -g");
                     return;
                 }
 

@@ -120,28 +120,28 @@ namespace Adventurer
             Datafile.Load(pSnapShot);
             Datafile.getTokens(1);//skip the first line.
 
-            int[] header = Datafile.GetTokensAsInt(5);
+            int[] header = Datafile.GetTokensAsInt(4);
 
             //header[0] = changed items - multiply number by two as they are in pairs of index id and new location
-            //header[1] = input history
-            //header[2] = bitflags  - pairs index, value
-            //header[3] = counters - pairs index, value
-            //header[4] = saved rooms - pairs index, value
+            //header[1] = bitflags  - pairs index, value
+            //header[2] = counters - pairs index, value
+            //header[3] = saved rooms - pairs index, value
 
             //get header
             int[] intarray = Datafile.GetTokensAsInt(header[0] * 2);
             for (int i = 0; i < intarray.Length; i += 2)
                 gd.Items[intarray[i]].Location = intarray[i + 1];
 
-            intarray = Datafile.GetTokensAsInt(header[2] * 2);
+            //bit glags
+            intarray = Datafile.GetTokensAsInt(header[1] * 2);
             for (int i = 0; i < intarray.Length; i += 2)
                 gd.BitFlags[intarray[i]] = intarray[i + 1] == 1;
 
-            intarray = Datafile.GetTokensAsInt(header[3] * 2);
+            intarray = Datafile.GetTokensAsInt(header[2] * 2);
             for (int i = 0; i < intarray.Length; i += 2)
                 gd.Counters[intarray[i]] = intarray[i + 1];
 
-            intarray = Datafile.GetTokensAsInt(header[4] * 2);
+            intarray = Datafile.GetTokensAsInt(header[3] * 2);
             for (int i = 0; i < intarray.Length; i += 2)
                 gd.SavedRooms[intarray[i]] = intarray[i + 1];
 
@@ -743,6 +743,7 @@ namespace Adventurer
         static int[] twoArgActions = { 62, 72, 75 };
         static int[] oneActionArgs = { 52, 53, 54, 55, 58, 59, 60, 74, 78, 81, 82, 83, 79 };
 
+
         static int[] actionArgsWithOneItem = { 52, 53, 55, 59, 74, 62 }; //note 62, a two arg action which moves item arg1 to room arg2
         static int[] actionsWithTwoItems = { 72, 65 };
 
@@ -792,10 +793,10 @@ namespace Adventurer
                                                     ? String.Format("A Output message: {0}", replaceChars(Messages[act[0]-50], new char[] {'\r','\n' }))    //output message
                                                     //vvv Output a string based on the number of args the action has
                                                     : oneActionArgs.Contains(act[0])
-                                                        ? string.Format("A {0}: {1}", actions[act[0] - 52], act[1])
+                                                        ? string.Format("{0}: {1}", actions[act[0] - 52], act[1])
                                                         : twoArgActions.Contains(act[0])
-                                                            ? string.Format("A {0}: {1} {2}", actions[act[0] - 52], act[1], act[2])
-                                                            : string.Format("A {0}", actions[act[0] - 52])
+                                                            ? string.Format("{0}: {1} {2}", actions[act[0] - 52], act[1], act[2])
+                                                            : string.Format("{0}", actions[act[0] - 52])
 
 
 
