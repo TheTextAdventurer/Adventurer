@@ -510,7 +510,7 @@ namespace Adventurer
                     new XElement("Actions",
 
                         Enumerable.Range(0, header[2] + 1).
-                            Select(a => new XElement("Action", Datafile.GetTokensAsInt(8).Select((val, ind) => new XElement(String.Format("{0}", actionsDesc[ind]), val)))
+                            Select(a => new XElement("Action", new XAttribute("Index",a),Datafile.GetTokensAsInt(8).Select((val, ind) => new XElement(String.Format("{0}", actionsDesc[ind]), val)))
                             ))
                 );
 
@@ -532,6 +532,7 @@ namespace Adventurer
                         Enumerable.Range(0, header[4] + 1).
                             Select(a =>
                                         new XElement("Room"
+                                            , new XAttribute("Index", a)
                                             , new object[] {
                                              Datafile.getTokens(7).Select((val, ind) => new XElement(String.Format("{0}", roomDesc[ind]), val.Trim())) }
                                              ))
@@ -547,7 +548,7 @@ namespace Adventurer
                 (
                     new XElement("Messages",
                         Enumerable.Range(0, header[10] + 1).
-                            Select(a => new XElement("Message", Datafile.getTokens(1))))
+                            Select(a => new XElement("Message", new XAttribute("Index", a),Datafile.getTokens(1))))
                 );
 
             string[] itemDescripion = { "Name", "Word" };
@@ -556,6 +557,7 @@ namespace Adventurer
                     new XElement("Items",
                         Enumerable.Range(0, header[1] + 1).
                             Select(a => new XElement("Item",
+                                new XAttribute("Index", a),
                                 Datafile.getTokens(1).First().Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries)
                                     .Select((v,i) => new XElement(itemDescripion[i], v))
                                     , new XElement("Location", Datafile.GetTokensAsInt(1))
@@ -565,9 +567,9 @@ namespace Adventurer
             gameData.Add
                 (
                     new XElement("Comments",
-
+                        
                         Enumerable.Range(0, header[2] + 1).
-                            Select(a => new XElement("Comment", Datafile.getTokens(1))
+                            Select(a => new XElement("Comment", new XAttribute("Index", a), Datafile.getTokens(1))
                             ))
                 );
 
@@ -715,7 +717,7 @@ namespace Adventurer
                 ,"item ARG1 is moved to room ARG2"  //62
                 ,"game over"
                 ,"look"
-                ,"score"
+                ,"score"//65
                 ," output inventory"
                 ,"Set bit 0 true"
                 ,"Set bit 0 false"
@@ -745,7 +747,7 @@ namespace Adventurer
 
 
         static int[] actionArgsWithOneItem = { 52, 53, 55, 59, 74, 62 }; //note 62, a two arg action which moves item arg1 to room arg2
-        static int[] actionsWithTwoItems = { 72, 65 };
+        static int[] actionsWithTwoItems = { 72, 75 };
 
         /// <summary>
         /// Build an XML element for the provided action in a big, messy statement which I had a lot of fun writing ;)
