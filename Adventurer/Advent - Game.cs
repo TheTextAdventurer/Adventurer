@@ -463,7 +463,7 @@ namespace Adventurer
                 if (parentOutcome = ExcecuteAction(act))
                 {
                     if (act.Children != null)
-                        act.Children.All(ch => { ExcecuteAction(ch); return true; });
+                        ChildActions(act.Children);
                 }
 
                 //do more stuff
@@ -523,8 +523,20 @@ namespace Adventurer
             //DisableUserInput(false);
             PerformActionComponent(64, 0, 0); //look
 
+        }
 
-
+        /// <summary>
+        /// recurse through any children
+        /// </summary>
+        /// <param name="pActions"></param>
+        private static void ChildActions (Adventurer.GameData.Action[] pActions)
+        {
+            foreach (Adventurer.GameData.Action c in pActions)
+            {
+                ExcecuteAction(c);
+                if (c.Children != null)
+                    ChildActions(c.Children);
+            }            
         }
 
         /// <summary>
