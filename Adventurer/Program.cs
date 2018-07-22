@@ -223,10 +223,33 @@ namespace Adventurer
             
             Console.WriteLine(_GameView);
             Console.WriteLine();
+
+            //outputLine(_GameMessage);
+
             Console.WriteLine(_GameMessage);
             Console.WriteLine();            
         }
 
+        private static void outputLine(string pText)
+        {
+            if (pText.Length < Console.WindowWidth)
+                Console.WriteLine(pText);
+            else
+            {
+
+                int start = 0;
+                int length = 0;
+                string sub = null;
+                foreach (string line in pText.Split(new char[] { '\n' }))
+                {
+
+                    start = 0;
+                    length = line.Substring(start, Console.WindowWidth).LastIndexOf(" ");
+                    Console.WriteLine();
+                }
+            }
+            
+        }
 
         /// <summary>
         /// Display help screen

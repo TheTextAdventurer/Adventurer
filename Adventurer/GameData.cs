@@ -477,6 +477,24 @@ namespace Adventurer
 
         #region output dat as XML
 
+        /// <summary>
+        /// For 
+        /// </summary>
+        /// <returns></returns>
+        public string GetRoomData()
+        {
+            return string.Join("\n\n",
+            Rooms.Select((r, roomIndex) =>
+                roomIndex.ToString() + ": " + r.RawDescription + "\n"
+                + "ITEMS: " + String.Join(", ", Items.Where(i => i.Location == roomIndex)
+                                .Select(i => i.Description)
+                                .ToArray()) + "\n"
+                + "EXITS:" + String.Join(", ", r.Exits.Select(e => e.ToString()).ToArray()) + "\n"
+                ).ToArray()
+            );
+        }
+
+
         public void SaveAsUnFormattedXML(string pFile)
         {
             Datafile.Load(pFile);
