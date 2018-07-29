@@ -6,6 +6,9 @@
 
         private static int[] _InventoryLocations = { -1, 255 };
 
+        /// <summary>
+        /// Used by all scott adams adventure games. Do not change.
+        /// </summary>
         enum _Constants : int
         {
             INVENTORY = -1,
@@ -17,7 +20,6 @@
             LIGHOUTFLAG = 16,
             LIGHTSOURCE = 9
         }
-
 
 
         static readonly string[] _Sysmessages = { "OK\r\n" //0

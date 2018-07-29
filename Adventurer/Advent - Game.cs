@@ -246,7 +246,7 @@ namespace Adventurer
                 return;
             }
 
-            //we're now at point where the entered data appears to do something..
+            //we're now at point where the entered data appears to do something...
 
             //Check lamp life
             if (CheckCondition(13, (int)_Constants.LIGHTSOURCE) & _GameData.LampLife > 0)
@@ -375,14 +375,12 @@ namespace Adventurer
 
 
         /// <summary>
-        /// Is it dark
+        /// Is it dark?
         /// </summary>
         /// <returns></returns>
         static bool IsDark()
         {
-
             return (_GameData.BitFlags[(int)_Constants.DARKNESSFLAG] && CheckCondition(12, (int)_Constants.LIGHTSOURCE));
-
         }
 
         /// <summary>
@@ -403,7 +401,6 @@ namespace Adventurer
                 }
             }
             return retVal;    
-
         }
 
         /// <summary>
@@ -439,7 +436,6 @@ namespace Adventurer
             //message used if input is via a user, pVerb > 0
             var msg = pVerb > 0 ? 1 : 0;
 
-
             var parentOutcome = false;
 
             List<GameData.Action> candidates =
@@ -455,7 +451,6 @@ namespace Adventurer
                             || (pVerb == a.Verb && pNoun == a.Noun)
                             || (pVerb == a.Verb && a.Noun == 0)
                         ).ToList();
-
 
             foreach (GameData.Action act in candidates)
             {
@@ -487,7 +482,6 @@ namespace Adventurer
             {
                 msg = 2;
             }
-
 
             if (pVerb > 0)
             { //only do after user input

@@ -239,7 +239,6 @@ namespace Adventurer
 
                 int start = 0;
                 int length = 0;
-                string sub = null;
                 foreach (string line in pText.Split(new char[] { '\n' }))
                 {
 

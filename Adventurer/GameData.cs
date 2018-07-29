@@ -850,7 +850,7 @@ namespace Adventurer
 
         #endregion
 
-        #region snapshot data
+        #region save game data
 
         public Item[] Items = null;
         public bool[] BitFlags = new bool[32];
@@ -1121,6 +1121,7 @@ namespace Adventurer
             {
 
             }
+
             public Action(int[] pData)
             {
                 Comments = new List<string>();
@@ -1292,10 +1293,11 @@ namespace Adventurer
         }
         #endregion
 
-        #region load 
+        #region DatFile  
 
         /// <summary>
-        /// Load the DAT game file and break it into chunks
+        /// Load the DAT game file and break it into tokens which can be.
+        /// either numbers or string
         /// </summary>
         private static class Datafile
         {
@@ -1316,7 +1318,7 @@ namespace Adventurer
             /// <summary>
             /// Get the required number of DAT chunks as string
             /// </summary>
-            /// <param name="pCount"></param>
+            /// <param name="pCount">Number of tokens to return</param>
             /// <returns></returns>
             public static string[] getTokens(int pCount)
             {
@@ -1329,7 +1331,7 @@ namespace Adventurer
 
                     switch (file[pos].ToString())
                     {
-                        case "\"":
+                        case "\""://encountered the begining of a string, loop until another inverted comma is found
 
                             do
                             {
@@ -1339,7 +1341,7 @@ namespace Adventurer
 
                             break;
 
-                        default:
+                        default://must be at a number
                             do
                             {
                                 retval[ctr] += file[pos];
@@ -1363,7 +1365,7 @@ namespace Adventurer
             }
 
             /// <summary>
-            /// Get the required number of DAT chunks as int
+            /// Get the required number of DAT tokens as int
             /// </summary>
             /// <param name="pCount"></param>
             /// <returns></returns>
