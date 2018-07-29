@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using GameEngine;
 
-namespace Adventurer
+namespace GameEngine
 {
     static partial class Advent
     {
@@ -523,9 +524,9 @@ namespace Adventurer
         /// recurse through any children
         /// </summary>
         /// <param name="pActions"></param>
-        private static void ChildActions (Adventurer.GameData.Action[] pActions)
+        private static void ChildActions (GameData.Action[] pActions)
         {
-            foreach (Adventurer.GameData.Action c in pActions)
+            foreach (GameData.Action c in pActions)
             {
                 ExcecuteAction(c);
                 if (c.Children != null)

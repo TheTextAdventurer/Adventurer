@@ -5,6 +5,8 @@ using System.Text;
 using System.Diagnostics;
 using System.IO;
 using System.Xml.Linq;
+using GameEngine;
+
 
 namespace Adventurer
 {
@@ -238,7 +240,7 @@ namespace Adventurer
             {
 
                 int start = 0;
-                int length = 0;
+                int length = 0; 
                 foreach (string line in pText.Split(new char[] { '\n' }))
                 {
 

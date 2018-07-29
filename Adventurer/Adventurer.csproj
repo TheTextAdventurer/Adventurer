@@ -42,16 +42,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Advent - Constants.cs" />
-    <Compile Include="Advent - Events.cs" />
-    <Compile Include="Advent - Game Variables.cs" />
-    <Compile Include="Advent - Game.cs" />
-    <Compile Include="GameData.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <Import Project="..\GameEngine\GameEngine.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

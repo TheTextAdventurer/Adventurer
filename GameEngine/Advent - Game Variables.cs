@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Adventurer
+namespace GameEngine
 {
     static partial class Advent
     {

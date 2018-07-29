@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 
-namespace Adventurer
+namespace GameEngine
 {
     /// <summary>
     /// Contains the unpacked and processed game data from a .DAT file
