@@ -15,7 +15,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)Advent - Game.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Advent - Undo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Advent - IO.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DATToChunks.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GameData - Output.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GameData.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory)Game Notes.txt" />
   </ItemGroup>
 </Project>

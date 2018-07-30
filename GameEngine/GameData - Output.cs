@@ -17,7 +17,7 @@ namespace GameEngine
         /// </summary>     
         public void SaveAsUncommentedXML(string pFile)
         {
-            Datafile.Load(pFile);
+            DATToChunks.Load(pFile);
 
             XElement gameData = new XElement("GameData");
 
@@ -36,7 +36,7 @@ namespace GameEngine
              ,"TreasureRoom"};
 
 
-            int[] header = Datafile.GetTokensAsInt(12);
+            int[] header = DATToChunks.GetTokensAsInt(12);
             gameData.Add
                 (
                     new XElement("Header", header.Select((val, ind) => new XElement(String.Format("{0}", headerDesc[ind]), val)))
@@ -48,7 +48,7 @@ namespace GameEngine
                     new XElement("Actions",
 
                         Enumerable.Range(0, header[2] + 1).
-                            Select(a => new XElement("Action", new XAttribute("Index", a), Datafile.GetTokensAsInt(8).Select((val, ind) => new XElement(String.Format("{0}", actionsDesc[ind]), val)))
+                            Select(a => new XElement("Action", new XAttribute("Index", a), DATToChunks.GetTokensAsInt(8).Select((val, ind) => new XElement(String.Format("{0}", actionsDesc[ind]), val)))
                             ))
                 );
 
@@ -57,7 +57,7 @@ namespace GameEngine
                     new XElement("Words",
 
                         Enumerable.Range(0, (header[3] + 1) * 2).
-                            Select(a => Datafile.getTokens(1).Select(val => new XElement("Word", val)))
+                            Select(a => DATToChunks.getTokens(1).Select(val => new XElement("Word", val)))
                             )
                 );
 
@@ -72,7 +72,7 @@ namespace GameEngine
                                         new XElement("Room"
                                             , new XAttribute("Index", a)
                                             , new object[] {
-                                             Datafile.getTokens(7).Select((val, ind) => new XElement(String.Format("{0}", roomDesc[ind]), val.Trim())) }
+                                             DATToChunks.getTokens(7).Select((val, ind) => new XElement(String.Format("{0}", roomDesc[ind]), val.Trim())) }
                                              ))
 
 
@@ -86,7 +86,7 @@ namespace GameEngine
                 (
                     new XElement("Messages",
                         Enumerable.Range(0, header[10] + 1).
-                            Select(a => new XElement("Message", new XAttribute("Index", a), Datafile.getTokens(1))))
+                            Select(a => new XElement("Message", new XAttribute("Index", a), DATToChunks.getTokens(1))))
                 );
 
             string[] itemDescripion = { "Name", "Word" };
@@ -96,9 +96,9 @@ namespace GameEngine
                         Enumerable.Range(0, header[1] + 1).
                             Select(a => new XElement("Item",
                                 new XAttribute("Index", a),
-                                Datafile.getTokens(1).First().Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries)
+                                DATToChunks.getTokens(1).First().Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries)
                                     .Select((v, i) => new XElement(itemDescripion[i], v))
-                                    , new XElement("Location", Datafile.GetTokensAsInt(1))
+                                    , new XElement("Location", DATToChunks.GetTokensAsInt(1))
                             )))
                 );
 
@@ -107,14 +107,14 @@ namespace GameEngine
                     new XElement("Comments",
 
                         Enumerable.Range(0, header[2] + 1).
-                            Select(a => new XElement("Comment", new XAttribute("Index", a), Datafile.getTokens(1))
+                            Select(a => new XElement("Comment", new XAttribute("Index", a), DATToChunks.getTokens(1))
                             ))
                 );
 
             string[] commentDesc = { "Version", "AdventureNumber", "Unkown" };
             ; gameData.Add
                  (
-                     new XElement("Footer", Datafile.getTokens(3).Select((val, ind) => new XElement(String.Format("{0}", commentDesc[ind]), val)))
+                     new XElement("Footer", DATToChunks.getTokens(3).Select((val, ind) => new XElement(String.Format("{0}", commentDesc[ind]), val)))
                  );
 
             gameData.Save(GameName + ".unformatted.xml");
@@ -383,9 +383,9 @@ namespace GameEngine
             using (StreamWriter sw = new StreamWriter(outputFileName))
             {
 
-                Datafile.Load(pFile);
+                DATToChunks.Load(pFile);
 
-                var header = new GameHeader(Datafile.GetTokensAsInt(12));
+                var header = new GameHeader(DATToChunks.GetTokensAsInt(12));
 
                 sw.WriteLine("{0} /*Unknown*/", header.Unknown);
                 sw.WriteLine("{0} /*Number of items*/", header.NumItems);
@@ -404,7 +404,7 @@ namespace GameEngine
                 var labels = new string[] { "/*NounVerb*/", "/*Condition1*/", "/*Condition2*/", "/*Condition3*/", "/*Condition4*/", "/*Condition5*/", "/*Actions 1 and 2*/", "/*Actions 3 and 4*/" };
                 int ctr = 1;
                 foreach (var action in
-                    Enumerable.Range(0, header.NumActions).Select(n => Datafile.getTokens(8).ToArray()).ToArray())
+                    Enumerable.Range(0, header.NumActions).Select(n => DATToChunks.getTokens(8).ToArray()).ToArray())
                 {
                     sw.WriteLine("{0}\t\t\t/*Action index {1} - NounVerb*/", action.First(), ctr++);
                     for (int a = 1; a < 8; a++)
@@ -412,7 +412,7 @@ namespace GameEngine
                 }
 
                 int vb = 0, nn = 0,  j = 0;
-                foreach (var w in Datafile.getTokens(header.NumNounVerbs * 2))
+                foreach (var w in DATToChunks.getTokens(header.NumNounVerbs * 2))
                 {
 
                     if (j == 0) //verb
@@ -450,7 +450,7 @@ namespace GameEngine
 
                 ctr = 0;
                 string[] dire = { "/*North ", "/*South ", "/*East ", "/*West ", "/*Up ", "/*Down " };
-                foreach (var room in Enumerable.Range(0, header.NumRooms).Select(n => Datafile.getTokens(7).ToArray()))
+                foreach (var room in Enumerable.Range(0, header.NumRooms).Select(n => DATToChunks.getTokens(7).ToArray()))
                 {
 
                     for (int q = 0; q < 6; q++)
@@ -461,21 +461,21 @@ namespace GameEngine
 
                 ctr = 0;
 
-                foreach (var message in Datafile.getTokens(header.NumMessages))
+                foreach (var message in DATToChunks.getTokens(header.NumMessages))
                     sw.WriteLine("\"{0}\" /*Message {1}*/", message, ctr++);
 
 
                 ctr = 0;
-                foreach (var item in Enumerable.Range(0, header.NumItems).Select(n => Datafile.getTokens(2).ToArray()))
+                foreach (var item in Enumerable.Range(0, header.NumItems).Select(n => DATToChunks.getTokens(2).ToArray()))
                     sw.WriteLine("\"{0}\" /*Item {1} Description*/ {2} /*Location*/", item.First(), ctr++, item.Last());
 
                 ctr = 0;
-                foreach (var actionMessage in Datafile.getTokens(header.NumActions))
+                foreach (var actionMessage in DATToChunks.getTokens(header.NumActions))
                 {
                     sw.WriteLine("\"{0}\" /*Action {1} description*/", actionMessage, ctr++);
                 }
 
-                var footer = new GameFooter(Datafile.GetTokensAsInt(3));
+                var footer = new GameFooter(DATToChunks.GetTokensAsInt(3));
 
                 sw.WriteLine("\"{0}\" /*Version number*/", footer.Version);
                 sw.WriteLine("\"{0}\" /*Adventure number*/", footer.AdventureNumber);

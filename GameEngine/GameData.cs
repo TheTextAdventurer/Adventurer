@@ -23,7 +23,7 @@ namespace GameEngine
         public string[] Nouns = null;
         public string[] Messages = null;
         public string GameName = null;
-        public int TurnCounter { get; set;}
+        public int TurnCounter { get; set; }
 
         public UndoBlock CurrentUndoBlock;
         public bool RecordUndo { get; set; }
@@ -65,7 +65,7 @@ namespace GameEngine
             string gameRoot = GameName.Substring(0, GameName.IndexOf("."));
             int saves = Directory.GetFiles(CurrentFolder, gameRoot + "_*.sav").Length + 1;
             string sg;
-            using (StreamWriter sw = new StreamWriter((sg=string.Format("{0}_{1}.sav", gameRoot, saves))))
+            using (StreamWriter sw = new StreamWriter((sg = string.Format("{0}_{1}.sav", gameRoot, saves))))
             {
                 //write header
                 sw.WriteLine(string.Format("\"{0}\"", this.GameName));
@@ -117,10 +117,10 @@ namespace GameEngine
 
             GameData gd = Load(pAdvGame);
 
-            Datafile.Load(pSnapShot);
-            Datafile.getTokens(1);//skip the first line.
+            DATToChunks.Load(pSnapShot);
+            DATToChunks.getTokens(1);//skip the first line.
 
-            int[] header = Datafile.GetTokensAsInt(4);
+            int[] header = DATToChunks.GetTokensAsInt(4);
 
             //header[0] = changed items - multiply number by two as they are in pairs of index id and new location
             //header[1] = bitflags  - pairs index, value
@@ -128,30 +128,30 @@ namespace GameEngine
             //header[3] = saved rooms - pairs index, value
 
             //get header
-            int[] intarray = Datafile.GetTokensAsInt(header[0] * 2);
+            int[] intarray = DATToChunks.GetTokensAsInt(header[0] * 2);
             for (int i = 0; i < intarray.Length; i += 2)
                 gd.Items[intarray[i]].Location = intarray[i + 1];
 
             //bit glags
-            intarray = Datafile.GetTokensAsInt(header[1] * 2);
+            intarray = DATToChunks.GetTokensAsInt(header[1] * 2);
             for (int i = 0; i < intarray.Length; i += 2)
                 gd.BitFlags[intarray[i]] = intarray[i + 1] == 1;
 
-            intarray = Datafile.GetTokensAsInt(header[2] * 2);
+            intarray = DATToChunks.GetTokensAsInt(header[2] * 2);
             for (int i = 0; i < intarray.Length; i += 2)
                 gd.Counters[intarray[i]] = intarray[i + 1];
 
-            intarray = Datafile.GetTokensAsInt(header[3] * 2);
+            intarray = DATToChunks.GetTokensAsInt(header[3] * 2);
             for (int i = 0; i < intarray.Length; i += 2)
                 gd.SavedRooms[intarray[i]] = intarray[i + 1];
 
-            gd.CurrentRoom = Datafile.GetTokensAsInt(1).First();
-            gd.TakeSuccessful = Datafile.GetTokensAsInt(1).First() == 1;
-            gd.CurrentCounter = Datafile.GetTokensAsInt(1).First();
-            gd.LampLife = Datafile.GetTokensAsInt(1).First();
-            gd.PlayerNoun = Datafile.getTokens(1).First();
-            gd.SavedRoom = Datafile.GetTokensAsInt(1).First();
-            gd.TurnCounter = Datafile.GetTokensAsInt(1).First();
+            gd.CurrentRoom = DATToChunks.GetTokensAsInt(1).First();
+            gd.TakeSuccessful = DATToChunks.GetTokensAsInt(1).First() == 1;
+            gd.CurrentCounter = DATToChunks.GetTokensAsInt(1).First();
+            gd.LampLife = DATToChunks.GetTokensAsInt(1).First();
+            gd.PlayerNoun = DATToChunks.getTokens(1).First();
+            gd.SavedRoom = DATToChunks.GetTokensAsInt(1).First();
+            gd.TurnCounter = DATToChunks.GetTokensAsInt(1).First();
 
 
 
@@ -172,10 +172,9 @@ namespace GameEngine
 
             GameData gd = new GameData();
 
-            Datafile.Load(pFile);
+            DATToChunks.Load(pFile);
 
-
-            int[] header = Datafile.GetTokensAsInt(12);
+            int[] header = DATToChunks.GetTokensAsInt(12);
 
             gd.Header = new GameHeader(header);
             gd.Verbs = new string[gd.Header.NumNounVerbs];
@@ -187,7 +186,6 @@ namespace GameEngine
             gd.CurrentRoom = gd.Header.StartRoom;
             gd.LampLife = gd.Header.LightDuration;
 
-
             int ctr = 0;
 
             List<Action> Actions = new List<Action>();
@@ -195,7 +193,7 @@ namespace GameEngine
             #region Actions
 
             for (ctr = 0; ctr < gd.Header.NumActions; ctr++)
-                Actions.Add(new Action(Datafile.GetTokensAsInt(8)));
+                Actions.Add(new Action(DATToChunks.GetTokensAsInt(8)));
 
 
             #endregion
@@ -212,7 +210,7 @@ namespace GameEngine
 
             int v = 0;
             int n = 0;
-            string[] word = Datafile.getTokens(gd.Header.NumNounVerbs * 2);
+            string[] word = DATToChunks.getTokens(gd.Header.NumNounVerbs * 2);
 
             for (ctr = 0/*SKIP*/; ctr < word.Count(); ctr++)
             {
@@ -249,7 +247,7 @@ namespace GameEngine
 
             for (ctr = 0; ctr < gd.Rooms.Length; ctr++)
             {
-                gd.Rooms[ctr] = new Room(Datafile.GetTokensAsInt(6), Datafile.getTokens(1).First());
+                gd.Rooms[ctr] = new Room(DATToChunks.GetTokensAsInt(6), DATToChunks.getTokens(1).First());
 
 
                 gd.Rooms[ctr].Description += "\n\n" + _ObviousExits;
@@ -268,30 +266,27 @@ namespace GameEngine
                 {
                     gd.Rooms[ctr].Description += _None; //none
                 }
-
-
             }
-
 
             #endregion
 
             #region Build Game Messages
 
-            gd.Messages = Datafile.getTokens(gd.Messages.Length);
+            gd.Messages = DATToChunks.getTokens(gd.Messages.Length);
 
             #endregion
 
             #region Items
 
             for (ctr = 0; ctr < gd.Items.Length; ctr++)
-                gd.Items[ctr] = new Item(Datafile.getTokens(1).First(), Datafile.GetTokensAsInt(1).First());
+                gd.Items[ctr] = new Item(DATToChunks.getTokens(1).First(), DATToChunks.GetTokensAsInt(1).First());
 
             #endregion
 
             #region Add any comments to actions
 
             for (ctr = 0; ctr < gd.Header.NumActions; ctr++)
-                Actions[ctr].Comment = Datafile.getTokens(1).First();
+                Actions[ctr].Comment = DATToChunks.getTokens(1).First();
 
             #endregion
 
@@ -337,8 +332,6 @@ namespace GameEngine
             }
 
             #endregion
-
-
 
             //      Child action processing
 
@@ -429,15 +422,9 @@ namespace GameEngine
 
             #endregion
 
-
             gd.Actions = Actions.Where(a => a != null).ToArray();
 
-            gd.Footer = new GameFooter(Datafile.GetTokensAsInt(3));
-
-
-
-
-
+            gd.Footer = new GameFooter(DATToChunks.GetTokensAsInt(3));
 
             #region create first undo
 
@@ -466,9 +453,6 @@ namespace GameEngine
             gd.EndUndo();
             #endregion
 
-
-
-
             return gd;
 
         }
@@ -488,30 +472,78 @@ namespace GameEngine
         public int CurrentRoom
         {
             get { return _CurrentRoom; }
-            set { AddToCurrentUndoBlock(ChangeType.Update, ChangeItem.CurrentRoom, ChangeItemDataType.Int, (object)value, (object)_CurrentRoom, 0); _CurrentRoom = value; }
+            set
+            {
+                AddToCurrentUndoBlock(ChangeType.Update, ChangeItem.CurrentRoom, ChangeItemDataType.Int, (object)value, (object)_CurrentRoom, 0);
+                _CurrentRoom = value;
+            }
         }
 
         private bool _takeSuccessful;
-        public bool TakeSuccessful { get { return _takeSuccessful; } set { AddToCurrentUndoBlock(ChangeType.Update, ChangeItem.TakeSuccessful, ChangeItemDataType.Int, (object)value, (object)_takeSuccessful, 0); _takeSuccessful = value; } }
+        public bool TakeSuccessful
+        {
+            get { return _takeSuccessful; }
+            set
+            {
+                AddToCurrentUndoBlock(ChangeType.Update, ChangeItem.TakeSuccessful, ChangeItemDataType.Int, (object)value, (object)_takeSuccessful, 0);
+                _takeSuccessful = value;
+            }
+        }
 
         private int _currentCounter;
-        public int CurrentCounter { get { return _currentCounter; } set { AddToCurrentUndoBlock(ChangeType.Update, ChangeItem.CurrentCount, ChangeItemDataType.Int, (object)value, (object)_currentCounter, 0); _currentCounter = value; } }
+        public int CurrentCounter
+        {
+            get { return _currentCounter; }
+            set
+            {
+                AddToCurrentUndoBlock(ChangeType.Update, ChangeItem.CurrentCount, ChangeItemDataType.Int, (object)value, (object)_currentCounter, 0);
+                _currentCounter = value;
+            }
+        }
 
         private int _lampLife;
-        public int LampLife { get { return _lampLife; } set { AddToCurrentUndoBlock(ChangeType.Update, ChangeItem.LampLife, ChangeItemDataType.Int, (object)value, (object)_lampLife, 0); _lampLife = value; } }
+        public int LampLife
+        {
+            get { return _lampLife; }
+            set
+            {
+                AddToCurrentUndoBlock(ChangeType.Update, ChangeItem.LampLife, ChangeItemDataType.Int, (object)value, (object)_lampLife, 0);
+                _lampLife = value;
+            }
+        }
 
         private string _playerNoun;
         public string PlayerNoun
         {
             get { return _playerNoun; }
-            set { AddToCurrentUndoBlock(ChangeType.Update, ChangeItem.PlayerNoun, ChangeItemDataType.String, (object)value, (object)_playerNoun, 0); _playerNoun = value; }
+            set
+            {
+                AddToCurrentUndoBlock(ChangeType.Update, ChangeItem.PlayerNoun, ChangeItemDataType.String, (object)value, (object)_playerNoun, 0);
+                _playerNoun = value;
+            }
         }
 
         private int _savedRoom;
-        public int SavedRoom { get { return _savedRoom; } set { AddToCurrentUndoBlock(ChangeType.Update, ChangeItem.SavedRoom, ChangeItemDataType.Int, (object)value, (object)_savedRoom, 0); _savedRoom = value; } }
+        public int SavedRoom
+        {
+            get { return _savedRoom; }
+            set
+            {
+                AddToCurrentUndoBlock(ChangeType.Update, ChangeItem.SavedRoom, ChangeItemDataType.Int, (object)value, (object)_savedRoom, 0);
+                _savedRoom = value;
+            }
+        }
 
         private bool _endGame;
-        public bool EndGame { get { return _endGame; } set { AddToCurrentUndoBlock(ChangeType.Update, ChangeItem.EndGame, ChangeItemDataType.Bool, (object)value, (object)_endGame, 0); _endGame = value; } }
+        public bool EndGame
+        {
+            get { return _endGame; }
+            set
+            {
+                AddToCurrentUndoBlock(ChangeType.Update, ChangeItem.EndGame, ChangeItemDataType.Bool, (object)value, (object)_endGame, 0);
+                _endGame = value;
+            }
+        }
 
         #endregion        
 
@@ -876,7 +908,7 @@ namespace GameEngine
                             con[ctr] = args[argctr];
                             argctr++;
                         }
-                        if (argctr > args.Count()-1)
+                        if (argctr > args.Count() - 1)
                             break;
                     }
                 }
@@ -920,90 +952,6 @@ namespace GameEngine
         }
         #endregion
 
-        #region DatFile  
-
-        /// <summary>
-        /// Load the DAT game file and break it into tokens which can be.
-        /// either numbers or string
-        /// </summary>
-        private static class Datafile
-        {
-            private static string file = null;
-            private static int pos = 0;
-
-            public static void Load(string pFile)
-            {
-                pos = 0;
-                file = System.IO.File.ReadAllText(pFile).Trim();
-            }
-
-            static string[] le = new string[] { "\n", "\r" };
-
-
-            public static bool EOF { get { return !(pos < file.Length); } }
-
-            /// <summary>
-            /// Get the required number of DAT chunks as string
-            /// </summary>
-            /// <param name="pCount">Number of tokens to return</param>
-            /// <returns></returns>
-            public static string[] getTokens(int pCount)
-            {
-                string[] retval = new string[pCount];
-                int ctr = 0;
-
-                while (ctr < pCount)
-                {
-
-
-                    switch (file[pos].ToString())
-                    {
-                        case "\""://encountered the begining of a string, loop until another inverted comma is found
-
-                            do
-                            {
-                                retval[ctr] += file[pos];
-                                pos++;
-                            } while (!EOF && file[pos].ToString() != "\"");
-
-                            break;
-
-                        default://must be at a number
-                            do
-                            {
-                                retval[ctr] += file[pos];
-                                pos++;
-                            } while (!EOF && file[pos] != '\n');
-                            break;
-                    }
-
-                    do
-                    {
-                        pos++;
-                    } while (!EOF && le.Contains(file[pos].ToString()));
-
-
-                    retval[ctr] = retval[ctr].Trim(new char[] { ' ', '"', '\r','\n' });
-
-
-                    ctr++;
-                }
-                return retval;
-            }
-
-            /// <summary>
-            /// Get the required number of DAT tokens as int
-            /// </summary>
-            /// <param name="pCount"></param>
-            /// <returns></returns>
-            public static int[] GetTokensAsInt(int pCount)
-            {
-                return getTokens(pCount).Select(i => Convert.ToInt32(i)).ToArray();
-            }
-
-        }
-
-        #endregion
 
     }
 }

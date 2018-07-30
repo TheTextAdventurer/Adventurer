@@ -77,8 +77,8 @@ namespace Adventurer
         {
             Console.Clear();
             
-            Advent.GameView += Advent_GameView;
-            Advent.GameOutput += Advent_GameOutput;
+            Advent.RoomView += Advent_RoomView;
+            Advent.GameMessages += Advent_GameMessages;
             string arg;
             string arg1;
             string userInput = null;
@@ -300,7 +300,7 @@ namespace Adventurer
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private static void Advent_GameOutput(object sender, Advent.GameOuput e)
+        private static void Advent_GameMessages(object sender, Advent.GameOuput e)
         {
             if (e.Refresh)
                 _GameMessage = e.Message;
@@ -317,7 +317,7 @@ namespace Adventurer
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private static void Advent_GameView(object sender, Advent.GameOuput e)
+        private static void Advent_RoomView(object sender, Advent.GameOuput e)
         {
             _GameView = e.Message;
             Output();

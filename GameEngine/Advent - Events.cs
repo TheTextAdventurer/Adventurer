@@ -8,26 +8,26 @@ namespace GameEngine
     static partial class Advent
     {
 
-        public static event EventHandler<GameOuput> GameView;
+        public static event EventHandler<GameOuput> RoomView;
 
         /// <summary>
         /// Display the room view - items and description
         /// </summary>
-        private static void onUpdateView()
+        private static void SetRoomView()
         {
-            GameView(null, new GameOuput(_RoomView, true));
+            RoomView(null, new GameOuput(_RoomView, true));
         }
 
-        public static event EventHandler<GameOuput> GameOutput;
+        public static event EventHandler<GameOuput> GameMessages;
 
         /// <summary>
         /// Send a message out
         /// </summary>
         /// <param name="pMessage">Message to display</param>
         /// <param name="pClearOutput">Clear output before displaying message</param>
-        private static void SetGameOutput(string pMessage, bool pClearOutput)
+        private static void SendGameMessages(string pMessage, bool pClearOutput)
         {
-            GameOutput(null, new GameOuput(pMessage, pClearOutput));
+            GameMessages(null, new GameOuput(pMessage, pClearOutput));
         }
 
 

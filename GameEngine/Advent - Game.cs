@@ -7,7 +7,7 @@ using GameEngine;
 namespace GameEngine
 {
     /// <summary>
-    /// Game processing goes on in 
+    /// Game processing goes on in here.
     /// </summary>
     static partial class Advent
     {
@@ -15,7 +15,10 @@ namespace GameEngine
         /// Process the user input from the game
         /// </summary>
         /// <param name="pWords">User input</param>
-        /// <remarks>Bit of mess, this. Must tidy up.</remarks>
+        /// <remarks>
+        /// Raises the events:
+        ///     GameOutput
+        /// </remarks>
         public static void ProcessText(string pInput)
         {
             string[] words = pInput.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
@@ -25,26 +28,26 @@ namespace GameEngine
                 if (words.Length == 1 && words.First().Equals("#undo", StringComparison.OrdinalIgnoreCase))
                 {
                     if (!Undo())
-                        SetGameOutput("A voice BOOOOMS out: \"NOTHING TO UNDO\"", true);
+                        SendGameMessages("A voice BOOOOMS out: \"NOTHING TO UNDO\"", true);
                     return;
                 }
                 else if (words.Length == 1 && words.First().Equals("#redo", StringComparison.OrdinalIgnoreCase))
                 {
                     if (!Redo())
-                        SetGameOutput("A voice BOOOOMS out: \"NOTHING TO REDO\"", true);
+                        SendGameMessages("A voice BOOOOMS out: \"NOTHING TO REDO\"", true);
                     return;
                 }
             }
 
             _GameData.BeginUndo();
             _GameData.TurnCounter++;
-            SetGameOutput("", true);
+            SendGameMessages("", true);
 
             pInput = pInput.Trim();
 
             if (string.IsNullOrEmpty(pInput))
             {
-                SetGameOutput(_Sysmessages[11], true);
+                SendGameMessages(_Sysmessages[11], true);
                 _GameData.EndUndo();
                 return;
             }
@@ -57,8 +60,8 @@ namespace GameEngine
             if (words.Length == 1 && string.IsNullOrEmpty(words.First()))
             {
                 _GameData.PlayerNoun = "";
-                SetGameOutput(_Sysmessages[11], true);//What?
-                onUpdateView();//display room again
+                SendGameMessages(_Sysmessages[11], true);//What?
+                SetRoomView();//display room again
             }
             else
             {
@@ -80,8 +83,8 @@ namespace GameEngine
                     }
                     if (verbID == -1)
                     {
-                        SetGameOutput(string.Format("\"{0}\" {1}", words.First(), _Sysmessages[1]), true); //{0} is a word I don't know...sorry!
-                        onUpdateView();
+                        SendGameMessages(string.Format("\"{0}\" {1}", words.First(), _Sysmessages[1]), true); //{0} is a word I don't know...sorry!
+                        SetRoomView();
                         _GameData.EndUndo();
                         return;
                     }
@@ -97,8 +100,8 @@ namespace GameEngine
             else if //take / drop followed by <no word>
             (_GameData.PlayerNoun == "" && (verbID == (int)_Constants.VERB_TAKE || verbID == (int)_Constants.VERB_DROP))
             {
-                SetGameOutput(_Sysmessages[11], true); //What?
-                onUpdateView();
+                SendGameMessages(_Sysmessages[11], true); //What?
+                SetRoomView();
                 _GameData.EndUndo();
                 return;
             }
@@ -122,7 +125,7 @@ namespace GameEngine
                     //note the subtratcion - north is always 1, remove 1
                     PerformActionComponent(54, _GameData.Rooms[_GameData.CurrentRoom].Exits[nounID - 1], 0);
 
-                    SetGameOutput(
+                    SendGameMessages(
                         IsDark()
                                    ? _Sysmessages[17]    //dangerous to move in dark
                                    : _Sysmessages[0]    //can move
@@ -134,13 +137,13 @@ namespace GameEngine
                     //can't go in that direction
                     if (IsDark())
                     {
-                        SetGameOutput(_Sysmessages[18], true);
+                        SendGameMessages(_Sysmessages[18], true);
                         PerformActionComponent(63, 0, 0);
                         _GameData.EndUndo();
                         return;
                     }
                     else
-                        SetGameOutput(_Sysmessages[2], true);
+                        SendGameMessages(_Sysmessages[2], true);
                 }
 
             }
@@ -281,10 +284,8 @@ namespace GameEngine
         /// <summary>
         ///  Examine the enture actions list for entries with a matching verb/noun
         /// </summary>
-        /// <param name="pVerb"></param>
-        /// <param name="pNoun"></param>
-        /// <param name="pStartAction"></param>
-        /// <param name="pStartComponent"></param>
+        /// <param name="pVerb">Int</param>
+        /// <param name="pNoun">Int</param>
         private static void SearchActions(int pVerb, int pNoun)
         {
 
@@ -346,9 +347,9 @@ namespace GameEngine
                 if (!parentOutcome)
                 {
                     if (msg == 1) //don't understand
-                        SetGameOutput(_Sysmessages[15], true);
+                        SendGameMessages(_Sysmessages[15], true);
                     else if (msg == 2) //Can't do that yet
-                        SetGameOutput(_Sysmessages[14], true);
+                        SendGameMessages(_Sysmessages[14], true);
                 }
 
                 SearchActions(0, 0); //auto actions
@@ -362,13 +363,13 @@ namespace GameEngine
                 if (_GameData.LampLife == 0)
                 {
                     _GameData.ChangeBitFlag((int)_Constants.LIGHOUTFLAG, true);
-                    SetGameOutput(_Sysmessages[19], false);
+                    SendGameMessages(_Sysmessages[19], false);
                     _GameData.LampLife = 0;
                 }
                 else if (_GameData.LampLife > 0 && _GameData.LampLife < 25 &&
                   CheckCondition(3, (int)_Constants.LIGHTSOURCE) &&
                   _GameData.LampLife % 5 == 0)
-                    SetGameOutput(_Sysmessages[20], false); //light growing dim
+                    SendGameMessages(_Sysmessages[20], false); //light growing dim
             }
 
             //DisableUserInput(false);
@@ -521,10 +522,9 @@ namespace GameEngine
         private static void PerformActionComponent(int pAct, int pArg1, int pArg2)
         {
 
-
             if (pAct < 52 || pAct > 101)
             {
-                SetGameOutput(_GameData.Messages[pAct - (pAct > 101 ? 50 : 0)], false);
+                SendGameMessages(_GameData.Messages[pAct - (pAct > 101 ? 50 : 0)], false);
                 PerformActionComponent(86, 0, 0);//carriage return
             }
             else
@@ -540,7 +540,7 @@ namespace GameEngine
                             _GameData.TakeSuccessful = true;
                         }
                         else
-                            SetGameOutput(_Sysmessages[8], true);
+                            SendGameMessages(_Sysmessages[8], true);
                         break;
 
                     case 53: //drops item into current room
@@ -576,7 +576,7 @@ namespace GameEngine
                     case 61: //Death, clear dark flag, move to last room NOT GAME OVER, move to limbo room
                         PerformActionComponent(57, 0, 0);
                         _GameData.CurrentRoom = _GameData.Rooms.Count() - 1;
-                        SetGameOutput(_Sysmessages[24], false);
+                        SendGameMessages(_Sysmessages[24], false);
                         break;
 
                     case 62: //item is moved to room
@@ -585,7 +585,7 @@ namespace GameEngine
 
                     case 63: //game over
                         _GameData.EndGame = true;
-                        SetGameOutput(_Sysmessages[25], false);
+                        SendGameMessages(_Sysmessages[25], false);
                         break;
 
                     case 64: //look
@@ -615,7 +615,7 @@ namespace GameEngine
 
                         }
 
-                        onUpdateView();
+                        SetRoomView();
 
                         break;
 
@@ -623,14 +623,14 @@ namespace GameEngine
                         int storedItems = _GameData.Items.Count(i => i.Location == _GameData.Header.TreasureRoom
                                 && i.Description.StartsWith("*"));
 
-                        SetGameOutput(string.Format(
+                        SendGameMessages(string.Format(
                                             _Sysmessages[13]
                                             , storedItems
                                             , Math.Floor((storedItems * 1.0 / _GameData.Header.TotalTreasures) * 100)), false);
 
                         if (storedItems == _GameData.Header.TotalTreasures)
                         {
-                            SetGameOutput(_Sysmessages[26], true);
+                            SendGameMessages(_Sysmessages[26], true);
                             PerformActionComponent(63, 0, 0);
                         }
 
@@ -642,7 +642,7 @@ namespace GameEngine
                                         .Select(i => i.Description)
                                         .ToArray();
 
-                        SetGameOutput(_Sysmessages[9] +
+                        SendGameMessages(_Sysmessages[9] +
                                         (items.GetLength(0) == 0
                                         ? _Sysmessages[12]
                                         : String.Join(", ", items)), false);
@@ -667,13 +667,13 @@ namespace GameEngine
                         break;
 
                     case 70: //clear screen
-                        SetGameOutput("", true);
+                        SendGameMessages("", true);
                         _RoomView = null;
                         break;
 
                     case 71: //save game
 
-                        SetGameOutput(string.Format("Game {0} saved", _GameData.SaveSnapshot()), true);
+                        SendGameMessages(string.Format("Game {0} saved", _GameData.SaveSnapshot()), true);
                         PerformActionComponent(86, 0, 0);   //carriage return
                         break;
 
@@ -700,7 +700,7 @@ namespace GameEngine
                         break;
 
                     case 78: //output current counter
-                        SetGameOutput(_GameData.CurrentCounter + "\r\n", false);
+                        SendGameMessages(_GameData.CurrentCounter + "\r\n", false);
                         break;
 
                     case 79: //set current counter value
@@ -730,15 +730,15 @@ namespace GameEngine
                         break;
 
                     case 84: //echo noun without cr
-                        SetGameOutput(_GameData.PlayerNoun, false);
+                        SendGameMessages(_GameData.PlayerNoun, false);
                         break;
 
                     case 85: //echo noun
-                        SetGameOutput(_GameData.PlayerNoun + "\r\n", false);
+                        SendGameMessages(_GameData.PlayerNoun + "\r\n", false);
                         break;
 
                     case 86: //Carriage Return"
-                        SetGameOutput("\r\n", false);
+                        SendGameMessages("\r\n", false);
                         break;
 
                     case 87: //Swap current location value with backup location-swap value
