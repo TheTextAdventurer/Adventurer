@@ -6,166 +6,22 @@ using GameEngine;
 
 namespace GameEngine
 {
+    /// <summary>
+    /// Game processing goes on in 
+    /// </summary>
     static partial class Advent
     {
-        #region IO
-        /// <summary>
-        /// Load a game
-        /// </summary>
-        /// <param name="pFile">Game file</param>
-        public static void LoadGame(string pFile)
-        {
-            _GameData = GameData.Load(pFile);            
-            _GameData.BeginUndo();
-            SearchActions(0, 0);
-            _GameData.EndUndo();
-        }
-
-        public static void SaveAsFormattedXML()
-        {
-            _GameData.SaveAsFormattedXML();
-        }
-
-        public static void SaveAsUnFormattedXML(string pFile)
-        {
-            _GameData.SaveAsUnFormattedXML(pFile);
-        }
-
-        /// <summary>
-        /// Restore a saved game
-        /// </summary>
-        /// <param name="pFile">Game file</param>
-        public static void RestoreGame(string pAdvGame, string pSnapShot)
-        {
-            _GameData = GameData.LoadSnapShot(pAdvGame, pSnapShot);
-            PerformActionComponent(64, 0, 0);//look
-        }
-
-        #endregion
-
-        #region undo functionality
-
-        public static bool Undo()
-        {
-            if (_GameData.UndoPosition > 0)
-            {
-                RestoreUndoblock(true);
-                PerformActionComponent(64, 0, 0);//look
-                SearchActions(0, 0);
-                return true;
-            }
-            return false;
-        }
-
-        public static bool Redo()
-        {
-            if (_GameData.UndoPosition < _GameData.UndoHistory.Count() - 1)
-            {
-                RestoreUndoblock(false);
-                PerformActionComponent(64, 0, 0);//look
-                SearchActions(0, 0);
-                return true;
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// 
-        /// 
-        /// </summary>
-        /// <param name="pUndo"></param>
-        private static void RestoreUndoblock(bool pUndo)
-        {
-
-            if (!pUndo)
-            {
-                _GameData.UndoPosition++;
-                _GameData.SetCurrentUndo(_GameData.UndoPosition);
-            }
-
-
-            _GameData.RecordUndo = false;
-
-
-            foreach (GameData.ChangeRepresentationObject o in _GameData.CurrentUndoBlock.Block)
-            {
-
-                switch (o.Item)
-                {
-                    case GameData.ChangeItem.Item:
-                        _GameData.Items[o.Index].Location = pUndo ? (int)o.OldData : (int)o.NewData;
-                        break;
-
-                    case GameData.ChangeItem.BitFlag:
-                        _GameData.BitFlags[o.Index] = (bool)(pUndo ? o.OldData : o.NewData);
-                        break;
-
-                    case GameData.ChangeItem.Counter:
-                        _GameData.Counters[o.Index] = (int)(pUndo ? o.OldData : o.NewData);
-                        break;
-
-                    case GameData.ChangeItem.SavedRooms:
-                        _GameData.SavedRooms[o.Index] = (int)(pUndo ? o.OldData : o.NewData);
-                        break;
-
-                    case GameData.ChangeItem.CurrentRoom:
-                        _GameData.CurrentRoom = (int)(pUndo ? o.OldData : o.NewData);
-                        break;
-
-                    case GameData.ChangeItem.TakeSuccessful:
-                        _GameData.TakeSuccessful = (bool)(pUndo ? o.OldData : o.NewData);
-                        break;
-
-                    case GameData.ChangeItem.CurrentCount:
-                        _GameData.CurrentCounter = (int)(pUndo ? o.OldData : o.NewData);
-                        break;
-
-                    case GameData.ChangeItem.LampLife:
-                        _GameData.LampLife = (int)(pUndo ? o.OldData : o.NewData);
-                        break;
-
-                    case GameData.ChangeItem.PlayerNoun:
-                        _GameData.PlayerNoun = (string)(pUndo ? o.OldData : o.NewData);
-                        break;
-
-                    case GameData.ChangeItem.SavedRoom:
-                        _GameData.SavedRoom = (int)(pUndo ? o.OldData : o.NewData);
-                        break;
-
-                    case GameData.ChangeItem.EndGame:
-                        _GameData.EndGame = (bool)(pUndo ? o.OldData : o.NewData);
-                        break;
-                }
-
-            }
-
-            _GameData.RecordUndo = true;
-
-            if (pUndo)
-            {
-                _GameData.UndoPosition--;
-                _GameData.SetCurrentUndo(_GameData.UndoPosition);
-            }
-
-
-
-        }
-
-        #endregion
-
-        #region game code
-
         /// <summary>
         /// Process the user input from the game
         /// </summary>
         /// <param name="pWords">User input</param>
-        /// <remarks>Bit of miss this, must tidy up.</remarks>
+        /// <remarks>Bit of mess, this. Must tidy up.</remarks>
         public static void ProcessText(string pInput)
         {
             string[] words = pInput.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
             if (pInput.StartsWith("#"))
-            {           
+            {
                 if (words.Length == 1 && words.First().Equals("#undo", StringComparison.OrdinalIgnoreCase))
                 {
                     if (!Undo())
@@ -201,8 +57,8 @@ namespace GameEngine
             if (words.Length == 1 && string.IsNullOrEmpty(words.First()))
             {
                 _GameData.PlayerNoun = "";
-                SetGameOutput(_Sysmessages[11], true);
-                onUpdateView();
+                SetGameOutput(_Sysmessages[11], true);//What?
+                onUpdateView();//display room again
             }
             else
             {
@@ -224,7 +80,7 @@ namespace GameEngine
                     }
                     if (verbID == -1)
                     {
-                        SetGameOutput(string.Format("\"{0}\" {1}", words.First(), _Sysmessages[1]), true);
+                        SetGameOutput(string.Format("\"{0}\" {1}", words.First(), _Sysmessages[1]), true); //{0} is a word I don't know...sorry!
                         onUpdateView();
                         _GameData.EndUndo();
                         return;
@@ -238,10 +94,10 @@ namespace GameEngine
                 _GameData.PlayerNoun = words[1];
                 nounID = SearchWordList(_GameData.Nouns, _GameData.PlayerNoun.ToUpper());
             }
-            else if //take / drop <no word>
+            else if //take / drop followed by <no word>
             (_GameData.PlayerNoun == "" && (verbID == (int)_Constants.VERB_TAKE || verbID == (int)_Constants.VERB_DROP))
             {
-                SetGameOutput(_Sysmessages[11], true);
+                SetGameOutput(_Sysmessages[11], true); //What?
                 onUpdateView();
                 _GameData.EndUndo();
                 return;
@@ -401,7 +257,7 @@ namespace GameEngine
                     break;
                 }
             }
-            return retVal;    
+            return retVal;
         }
 
         /// <summary>
@@ -414,7 +270,7 @@ namespace GameEngine
             if (ActionTest(pAction.Conditions))
             {
                 //step through the components
-                foreach (int[] act in pAction.Actions.Where(a=>a[0] > 0))
+                foreach (int[] act in pAction.Actions.Where(a => a[0] > 0))
                     PerformActionComponent(act[0], act[1], act[2]);
 
                 return true;
@@ -524,14 +380,14 @@ namespace GameEngine
         /// recurse through any children
         /// </summary>
         /// <param name="pActions"></param>
-        private static void ChildActions (GameData.Action[] pActions)
+        private static void ChildActions(GameData.Action[] pActions)
         {
             foreach (GameData.Action c in pActions)
             {
                 ExcecuteAction(c);
                 if (c.Children != null)
                     ChildActions(c.Children);
-            }            
+            }
         }
 
         /// <summary>
@@ -817,7 +673,7 @@ namespace GameEngine
 
                     case 71: //save game
 
-                        SetGameOutput(string.Format("Game {0} saved", _GameData.SaveSnapshot()), true);                      
+                        SetGameOutput(string.Format("Game {0} saved", _GameData.SaveSnapshot()), true);
                         PerformActionComponent(86, 0, 0);   //carriage return
                         break;
 
@@ -905,7 +761,7 @@ namespace GameEngine
         /// <returns>Have they been met</returns>
         private static bool ActionTest(int[][] pConds)
         {
-            foreach (int[] con in pConds.Where(c=>c[0]> 0))
+            foreach (int[] con in pConds.Where(c => c[0] > 0))
             {
                 if (!CheckCondition(con[0], con[1]))
                     return false;
@@ -932,7 +788,5 @@ namespace GameEngine
         {
             return _GameData.Items.Where(i => pLocation.Contains(i.Location)).ToArray();
         }
-
-        #endregion
     }
 }

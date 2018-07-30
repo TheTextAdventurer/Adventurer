@@ -9,12 +9,22 @@ namespace GameEngine
     {
 
         public static event EventHandler<GameOuput> GameView;
+
+        /// <summary>
+        /// Display the room view - items and description
+        /// </summary>
         private static void onUpdateView()
         {
             GameView(null, new GameOuput(_RoomView, true));
         }
 
         public static event EventHandler<GameOuput> GameOutput;
+
+        /// <summary>
+        /// Send a message out
+        /// </summary>
+        /// <param name="pMessage">Message to display</param>
+        /// <param name="pClearOutput">Clear output before displaying message</param>
         private static void SetGameOutput(string pMessage, bool pClearOutput)
         {
             GameOutput(null, new GameOuput(pMessage, pClearOutput));

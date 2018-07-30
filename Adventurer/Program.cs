@@ -53,7 +53,7 @@ namespace Adventurer
         static XElement _RobotOutput;
 
         //load save game/load game/output friendly xml/output raw xml/display turn counter/show help/robot
-        static string[] flags = { "-l", "-g", "-f", "-r", "-t","-h","-b" };
+        static string[] flags = { "-l", "-g", "-f", "-r", "-t","-h","-b","-c" };
 
         /// <summary>
         /// Returns the argument provided with the specified flag
@@ -98,14 +98,19 @@ namespace Adventurer
                 }
                 else if ((arg = getFlagArg(flags[3], args)) != null) //raw XML output of specified game file
                 {
-                    Advent.LoadGame(arg);
-                    Advent.SaveAsUnFormattedXML(arg);
+                    var g = GameData.Load(arg);
+                    g.SaveAsUncommentedXML(arg);
                     return;
                 }
                 else if ((arg = getFlagArg(flags[2], args)) != null) //formatted output of specified game file
                 {
-                    Advent.LoadGame(arg);
-                    Advent.SaveAsFormattedXML();
+                    var g = GameData.Load(arg);
+                    g.SaveAsCommentedXML();
+                    return;
+                }
+                else if ((arg = getFlagArg(flags[7], args)) != null) //formatted output of specified game file
+                {
+                    GameData.SaveAsCommentedDat(arg);
                     return;
                 }
 
@@ -278,6 +283,7 @@ namespace Adventurer
             Console.WriteLine("\t-t\tDisplay turn counter in game");
             Console.WriteLine("\t-f\tOutput specified game in commented XML -fAdv01.dat");
             Console.WriteLine("\t-r\tOutput specified game in XML -rAdv01.dat");
+            Console.WriteLine("\t-c\tOutput specified game in formatted dat -cAdv01.dat");
             Console.WriteLine("\t-h\tDisplay help");
             Console.WriteLine("\t-b\tRecord game, must specify output name -bRecorded");
             Console.WriteLine();
@@ -314,7 +320,6 @@ namespace Adventurer
         private static void Advent_GameView(object sender, Advent.GameOuput e)
         {
             _GameView = e.Message;
-
             Output();
         }
 
