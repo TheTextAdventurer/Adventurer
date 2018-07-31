@@ -52,7 +52,7 @@ namespace Adventurer
         /// </summary>
         static XElement _RobotOutput;
 
-        //load save game/load game/output friendly xml/output raw xml/display turn counter/show help/robot
+        //load save game/load game/output friendly xml/output raw xml/display turn counter/show help/robot/output as commented DAT
         static string[] flags = { "-l", "-g", "-f", "-r", "-t","-h","-b","-c" };
 
         /// <summary>
@@ -227,7 +227,7 @@ namespace Adventurer
                 Console.WriteLine();
             }
 
-            
+
             Console.WriteLine(_GameView);
             Console.WriteLine();
 
@@ -237,21 +237,25 @@ namespace Adventurer
             Console.WriteLine();            
         }
 
+        /// <summary>
+        /// To prevent a word being displayed over two lines, break the string
+        /// into individual words and print as many as fit onto a line
+        /// </summary>
+        /// <param name="pText"></param>
         private static void outputLine(string pText)
         {
-            if (pText.Length < Console.WindowWidth)
-                Console.WriteLine(pText);
-            else
+            if (pText == null)
+                return;
+
+            string line = "";
+            foreach (string word in pText.Split(new char[] {' '}))
             {
-
-                int start = 0;
-                int length = 0; 
-                foreach (string line in pText.Split(new char[] { '\n' }))
+                if (line.Length+word.Length < Console.WindowWidth)
+                    line += (word + " ");
+                else
                 {
-
-                    start = 0;
-                    length = line.Substring(start, Console.WindowWidth).LastIndexOf(" ");
-                    Console.WriteLine();
+                    Console.WriteLine(line);
+                    line = word;
                 }
             }
             
@@ -282,7 +286,7 @@ namespace Adventurer
             Console.WriteLine("\t-g\tSpecify game save file -lAdv01.sav - must be used with -g");
             Console.WriteLine("\t-t\tDisplay turn counter in game");
             Console.WriteLine("\t-f\tOutput specified game in commented XML -fAdv01.dat");
-            Console.WriteLine("\t-r\tOutput specified game in XML -rAdv01.dat");
+            Console.WriteLine("\t-r\tOutput specified game in uncommented XML -rAdv01.dat");
             Console.WriteLine("\t-c\tOutput specified game in formatted dat -cAdv01.dat");
             Console.WriteLine("\t-h\tDisplay help");
             Console.WriteLine("\t-b\tRecord game, must specify output name -bRecorded");
@@ -302,12 +306,13 @@ namespace Adventurer
         /// <param name="e"></param>
         private static void Advent_GameMessages(object sender, Advent.GameOuput e)
         {
+            Debug.WriteLine("Advent_GameMessages: " + e.Message);
             if (e.Refresh)
                 _GameMessage = e.Message;
             else
                 _GameMessage += e.Message;
 
-            Output();
+                Output();
         }
 
 
@@ -320,6 +325,7 @@ namespace Adventurer
         private static void Advent_RoomView(object sender, Advent.GameOuput e)
         {
             _GameView = e.Message;
+            Debug.WriteLine("Advent_RoomView");
             Output();
         }
 

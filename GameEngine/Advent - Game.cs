@@ -21,17 +21,27 @@ namespace GameEngine
         /// </remarks>
         public static void ProcessText(string pInput)
         {
+            pInput = pInput.Trim();
+
+            if (string.IsNullOrEmpty(pInput))
+            {
+                SendGameMessages(_Sysmessages[11], true); //what
+                _GameData.PlayerNoun = "";
+                return;
+            }
+
+
             string[] words = pInput.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
             if (pInput.StartsWith("#"))
             {
-                if (words.Length == 1 && words.First().Equals("#undo", StringComparison.OrdinalIgnoreCase))
+                if (words.Length == 1 && CompareString(words.First(), "#undo"))
                 {
                     if (!Undo())
                         SendGameMessages("A voice BOOOOMS out: \"NOTHING TO UNDO\"", true);
                     return;
                 }
-                else if (words.Length == 1 && words.First().Equals("#redo", StringComparison.OrdinalIgnoreCase))
+                else if (words.Length == 1 && CompareString(words.First(), "#redo"))
                 {
                     if (!Redo())
                         SendGameMessages("A voice BOOOOMS out: \"NOTHING TO REDO\"", true);
@@ -43,53 +53,38 @@ namespace GameEngine
             _GameData.TurnCounter++;
             SendGameMessages("", true);
 
-            pInput = pInput.Trim();
 
-            if (string.IsNullOrEmpty(pInput))
+
+            string verb = words.Count() == 0 
+                            ? "" 
+                            : ShrinkWord(words.First());
+
+            if (CompareString(verb, "i"))
+                verb = _GameData.Verbs.First(v => v.StartsWith("INV"));
+
+            int verbID = SearchWordList(_GameData.Verbs, verb);
+            int nounID = -1;            
+
+            if (CompareString(verb, "i"))
+                verb = _GameData.Verbs.First(v => v.StartsWith("INV"));
+             
+            //verb not recognised or isn't direction
+            if (verbID == -1)
             {
-                SendGameMessages(_Sysmessages[11], true);
-                _GameData.EndUndo();
-                return;
-            }
-
-            string verb = "";
-            int verbID = -1;
-            int nounID = -1;
-            int temp = 0;
-
-            if (words.Length == 1 && string.IsNullOrEmpty(words.First()))
-            {
-                _GameData.PlayerNoun = "";
-                SendGameMessages(_Sysmessages[11], true);//What?
-                SetRoomView();//display room again
-            }
-            else
-            {
-                verb = ShrinkWord(words.First());
-
-                if (verb.Equals("i", StringComparison.OrdinalIgnoreCase))
-                    verb = "INV";
-
-                verbID = SearchWordList(_GameData.Verbs, verb);
-
-
-                //verb not recognised or isn't direction
+                int temp = 0;
+                if ((temp = IsDirection(verb)) > -1) //is direction?
+                {
+                    verbID = (int)_Constants.VERB_GO;
+                    nounID = temp;
+                }
                 if (verbID == -1)
                 {
-                    if ((temp = IsDirection(verb)) > -1) //is direction?
-                    {
-                        verbID = (int)_Constants.VERB_GO;
-                        nounID = temp;
-                    }
-                    if (verbID == -1)
-                    {
-                        SendGameMessages(string.Format("\"{0}\" {1}", words.First(), _Sysmessages[1]), true); //{0} is a word I don't know...sorry!
-                        SetRoomView();
-                        _GameData.EndUndo();
-                        return;
-                    }
+                    SendGameMessages(string.Format("\"{0}\" {1}", words.First(), _Sysmessages[1]), true); //{0} is a word I don't know...sorry!
+                    _GameData.EndUndo();
+                    return;
                 }
             }
+
 
 
             if (words.Length > 1 && nounID == -1)//two words entered
@@ -101,7 +96,6 @@ namespace GameEngine
             (_GameData.PlayerNoun == "" && (verbID == (int)_Constants.VERB_TAKE || verbID == (int)_Constants.VERB_DROP))
             {
                 SendGameMessages(_Sysmessages[11], true); //What?
-                SetRoomView();
                 _GameData.EndUndo();
                 return;
             }
@@ -117,10 +111,8 @@ namespace GameEngine
             //player moving in direction
             if (verbID == (int)_Constants.VERB_GO && nounID > -1 && nounID < 7)
             {
-
                 if (_GameData.Rooms[_GameData.CurrentRoom].Exits[nounID - 1] > 0)
                 {
-
                     //direction being moved in exists
                     //note the subtratcion - north is always 1, remove 1
                     PerformActionComponent(54, _GameData.Rooms[_GameData.CurrentRoom].Exits[nounID - 1], 0);
@@ -149,70 +141,9 @@ namespace GameEngine
             }
             else
             {
-
-                ////take / drop all
-                //if ((verbID == (int)_Constants.VERB_TAKE || verbID == (int)_Constants.VERB_DROP) && _GameData.PlayerNoun.ToUpper() == "ALL")
-                //{
-
-                //    //we're only intesred in standard items that have an associated word,
-                //    //can be naturally picked and dropped. Special cases that have no word
-                //    //such as the magic mirror in ADV01.dat are picked and dropped by special actions
-                //    bool happened = false;
-                //    for (var i = 0; i < _GameData.Items.Length; i++)
-                //    {
-
-                //        if (_GameData.Items[i].Location == (verbID == (int)_Constants.VERB_TAKE ? _GameData.CurrentRoom : (int)_Constants.INVENTORY)
-                //             && _GameData.Items[i].Word != null)
-                //        {
-
-                //            if (verbID == (int)_Constants.VERB_TAKE)
-                //            {
-
-                //                if (!IsDark())
-                //                {
-
-                //                    if (GetItemsAt((int)_Constants.INVENTORY).Length < _GameData.Header.MaxCarry)
-                //                    {
-                //                        PerformActionComponent(52, i, 0);
-                //                        SetGameOutput(_GameData.Items[i].Description + ": " + _Sysmessages[0], false);
-                //                    }
-                //                    else
-                //                    {
-                //                        SetGameOutput(_Sysmessages[8], false);
-                //                        break;
-                //                    }
-                //                }
-                //                else
-                //                    SetGameOutput(_Sysmessages[16], false); //too dark to take all
-                //            }
-                //            else
-                //            {
-                //                //drop all
-                //                _GameData.ChangeItemLocation(i, _GameData.CurrentRoom);
-                //                SetGameOutput(_GameData.Items[i].Description + ": " + _Sysmessages[0], false);
-                //            }
-
-                //            happened = true;
-                //        }
-                //    }
-
-                //    if (!happened)
-                //        SetGameOutput(verbID == (int)_Constants.VERB_TAKE ? _Sysmessages[21] : _Sysmessages[22], true);
-
-                //    PerformActionComponent(64, 0, 0); //look
-                //}
-                //else
-                //{
-                //    //compare against custome actions
-                //    SearchActions(verbID, nounID);
-                //    _GameData.EndUndo();
-                //    return;
-                //}
-
                 SearchActions(verbID, nounID);
                 _GameData.EndUndo();
                 return;
-
             }
 
             SearchActions(0, 0);
@@ -337,9 +268,7 @@ namespace GameEngine
 
             //output a can't do that message if we recognise a player verb in the list, but not a noun
             if (pVerb > 0 && !parentOutcome & _GameData.Actions.Count(act => act.Verb == pVerb) > 0)
-            {
                 msg = 2;
-            }
 
             if (pVerb > 0)
             { //only do after user input
@@ -351,9 +280,7 @@ namespace GameEngine
                     else if (msg == 2) //Can't do that yet
                         SendGameMessages(_Sysmessages[14], true);
                 }
-
                 SearchActions(0, 0); //auto actions
-                                     //DisableUserInput(false);
             }
 
             //lamp stuff, is it in the game
@@ -372,9 +299,7 @@ namespace GameEngine
                     SendGameMessages(_Sysmessages[20], false); //light growing dim
             }
 
-            //DisableUserInput(false);
             PerformActionComponent(64, 0, 0); //look
-
         }
 
         /// <summary>
@@ -488,7 +413,7 @@ namespace GameEngine
         /// </summary>
         /// <param name="pWordList">Arry to search</param>
         /// <param name="pWord">word to search</param>
-        /// <returns>-1 if not present</returns>
+        /// <returns>-1 if not present, else index of match</returns>
         private static int SearchWordList(string[] pWordList, string pWord)
         {
             pWord = ShrinkWord(pWord);
@@ -511,6 +436,17 @@ namespace GameEngine
             }
 
             return retVal;
+        }
+
+        /// <summary>
+        /// Perform string comparison
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
+        private static bool CompareString(string a, string b)
+        {
+            return a.Equals(b, StringComparison.OrdinalIgnoreCase);
         }
 
         /// <summary>

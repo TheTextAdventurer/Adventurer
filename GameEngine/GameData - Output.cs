@@ -74,10 +74,7 @@ namespace GameEngine
                                             , new object[] {
                                              DATToChunks.getTokens(7).Select((val, ind) => new XElement(String.Format("{0}", roomDesc[ind]), val.Trim())) }
                                              ))
-
-
                             )
-
                 );
 
 
@@ -324,6 +321,7 @@ namespace GameEngine
                         , new XElement("ActionComponents"
                             , pAction.Actions.Where(act => act[0] > 0)
                                 .Select(act=> new XElement("Action"
+                                    , new XElement("Argument", act[0])
                                     , new XElement("Description",
 
                                             //this beast of a statement determines how the description of the

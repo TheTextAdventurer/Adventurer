@@ -1,6 +1,9 @@
 ﻿Player input = Advent.ProcessText(string input)
 
 Game outputs =	Advent.GameView - the room, its exits and any items
-				Advent.GameOutput - any messages generated
+				Advent.GameMessages  - any messages generated
 
 
+
+What?
+	Blank input
