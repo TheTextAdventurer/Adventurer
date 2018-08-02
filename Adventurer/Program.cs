@@ -75,10 +75,7 @@ namespace Adventurer
 
         static void Main(string[] args)
         {
-            Console.Clear();
-            
-            Advent.RoomView += Advent_RoomView;
-            Advent.GameMessages += Advent_GameMessages;
+            Console.Clear();           
             string arg;
             string arg1;
             string userInput = null;
@@ -119,6 +116,9 @@ namespace Adventurer
                 _TurnCounter = getFlagArg(flags[4], args) != null;
                 if (arg != null)
                 {
+
+                    Advent.RoomView += Advent_RoomView;
+                    Advent.GameMessages += Advent_GameMessages;
                     if (arg1 != null)
                     {
                         Advent.RestoreGame(arg, arg1);  //restore save game
@@ -147,6 +147,7 @@ namespace Adventurer
                     
                 }
                 #endregion
+
 
                 do
                 {
@@ -231,8 +232,6 @@ namespace Adventurer
             Console.WriteLine(_GameView);
             Console.WriteLine();
 
-            //outputLine(_GameMessage);
-
             Console.WriteLine(_GameMessage);
             Console.WriteLine();            
         }
@@ -247,18 +246,22 @@ namespace Adventurer
             if (pText == null)
                 return;
 
-            string line = "";
-            foreach (string word in pText.Split(new char[] {' '}))
+            if (pText.Length < Console.WindowWidth)
+                Console.WriteLine(pText);
+            else
             {
-                if (line.Length+word.Length < Console.WindowWidth)
-                    line += (word + " ");
-                else
+                string line = "";
+                foreach (string word in pText.Split(new char[] { ' ' }))
                 {
-                    Console.WriteLine(line);
-                    line = word;
+                    if ((line.Length + word.Length) < Console.WindowWidth)
+                        line += (word + " ");
+                    else
+                    {
+                        Console.WriteLine(line);
+                        line = word;
+                    }
                 }
             }
-            
         }
 
         /// <summary>
@@ -311,7 +314,6 @@ namespace Adventurer
                 _GameMessage = e.Message;
             else
                 _GameMessage += e.Message;
-
                 Output();
         }
 

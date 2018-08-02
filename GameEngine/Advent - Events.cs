@@ -15,7 +15,7 @@ namespace GameEngine
         /// </summary>
         private static void SetRoomView()
         {
-            RoomView(null, new GameOuput(_RoomView, true));
+            RoomView?.Invoke(null, new GameOuput(_RoomView, true));
         }
 
         public static event EventHandler<GameOuput> GameMessages;
@@ -27,7 +27,7 @@ namespace GameEngine
         /// <param name="pClearOutput">Clear output before displaying message</param>
         private static void SendGameMessages(string pMessage, bool pClearOutput)
         {
-            GameMessages(null, new GameOuput(pMessage, pClearOutput));
+            GameMessages?.Invoke(null, new GameOuput(pMessage, pClearOutput));
         }
 
 
