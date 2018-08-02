@@ -475,9 +475,9 @@ namespace GameEngine
 
                 var footer = new GameFooter(DATToChunks.GetTokensAsInt(3));
 
-                sw.WriteLine("\"{0}\" /*Version number*/", footer.Version);
-                sw.WriteLine("\"{0}\" /*Adventure number*/", footer.AdventureNumber);
-                sw.WriteLine("\"{0}\" /*Unknown*/", footer.Unknown);
+                sw.WriteLine("{0} /*Version number*/", footer.Version);
+                sw.WriteLine("{0} /*Adventure number*/", footer.AdventureNumber);
+                sw.WriteLine("{0} /*Unknown*/", footer.Unknown);
             }
 
 

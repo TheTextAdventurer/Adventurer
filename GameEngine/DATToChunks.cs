@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
 namespace GameEngine
@@ -11,19 +12,40 @@ namespace GameEngine
     /// </summary>
     public static class DATToChunks
     {
-        private static string file = null;
-        private static int pos = 0;
+
+        private static string[] tokens = null;
 
         public static void Load(string pFile)
         {
-            pos = 0;
-            file = File.ReadAllText(pFile).Trim();
+            var r = new Regex
+                            (
+                                "([\"][^\"]*?[\"])" //string
+                                + "|(/\\*(?:(?!\\*/).)*\\*/)"   //multiline comment
+                                + "|(\\d+)" //number
+                                , RegexOptions.Singleline
+                            );
+
+            tokens = r.Matches(File.ReadAllText(pFile))
+                        .Cast<Match>()
+                        .Where(m => !m.ToString().StartsWith("/"))//remove the comments
+                        .Select(m => m.ToString().Trim(new char[] { '"' }))
+                        .ToArray();
         }
 
-        static string[] le = new string[] { "\n", "\r" };
+
+        //private static string file = null;
+        private static int pos = 0;
+
+        //public static void Load(string pFile)
+        //{
+        //    pos = 0;
+        //    file = File.ReadAllText(pFile).Trim();
+        //}
+
+        //static string[] le = new string[] { "\n", "\r" };
 
 
-        public static bool EOF { get { return !(pos < file.Length); } }
+        public static bool EOF { get { return !(pos < tokens.Length); } }
 
         /// <summary>
         /// Get the required number of DAT chunks as string
@@ -32,39 +54,11 @@ namespace GameEngine
         /// <returns>string array</returns>
         public static string[] getTokens(int pCount)
         {
-            string[] retval = new string[pCount];
-            int ctr = 0;
+            string[] retval =
+                tokens.Skip(pos).Take(pCount).ToArray();
 
-            while (ctr < pCount)
-            {
-                switch (file[pos].ToString())
-                {
-                    case "\""://encountered the begining of a string, loop until another inverted comma is found
-                        do
-                        {
-                            retval[ctr] += file[pos];
-                            pos++;
-                        } while (!EOF && file[pos].ToString() != "\"");
-                        break;
+            pos += pCount;
 
-                    default://must be at a number
-                        do
-                        {
-                            retval[ctr] += file[pos];
-                            pos++;
-                        } while (!EOF && file[pos] != '\n');
-                        break;
-                }
-
-                do
-                {
-                    pos++;
-                } while (!EOF && le.Contains(file[pos].ToString()));
-
-                retval[ctr] = retval[ctr].Trim(new char[] { ' ', '"', '\r', '\n' });
-
-                ctr++;
-            }
             return retval;
         }
 
