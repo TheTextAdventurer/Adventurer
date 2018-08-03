@@ -385,16 +385,16 @@ namespace GameEngine
                 var header = new GameHeader(DATToChunks.GetTokensAsInt(12));
 
                 sw.WriteLine("{0} /*Unknown*/", header.Unknown);
-                sw.WriteLine("{0} /*Number of items*/", header.NumItems);
-                sw.WriteLine("{0} /*Number of actions*/", header.NumActions);
-                sw.WriteLine("{0} /*Number of Noun Verbs*/", header.NumNounVerbs);
-                sw.WriteLine("{0} /*Number of Rooms*/", header.NumRooms);
+                sw.WriteLine("{0} /*Number of items*/", header.NumItems-1);
+                sw.WriteLine("{0} /*Number of actions*/", header.NumActions-1);
+                sw.WriteLine("{0} /*Number of Noun Verbs*/", header.NumNounVerbs-1);
+                sw.WriteLine("{0} /*Number of Rooms*/", header.NumRooms-1);
                 sw.WriteLine("{0} /*Maximum carry*/", header.MaxCarry);
-                sw.WriteLine("{0} /*Start toom*/", header.StartRoom);
+                sw.WriteLine("{0} /*Start room*/", header.StartRoom);
                 sw.WriteLine("{0} /*Total treasures*/", header.TotalTreasures);
                 sw.WriteLine("{0} /*Word length*/", header.WordLength);
                 sw.WriteLine("{0} /*Light duration*/", header.LightDuration);
-                sw.WriteLine("{0} /*Number of messages*/", header.NumMessages);
+                sw.WriteLine("{0} /*Number of messages*/", header.NumMessages-1);
                 sw.WriteLine("{0} /*Treasure room*/", header.TreasureRoom);
 
                 //produces an array of arrays
@@ -478,8 +478,6 @@ namespace GameEngine
                 sw.WriteLine("{0} /*Adventure number*/", footer.AdventureNumber);
                 sw.WriteLine("{0} /*Unknown*/", footer.Unknown);
             }
-
-
         }        
     }
 }
