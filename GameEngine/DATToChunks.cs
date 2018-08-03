@@ -1,18 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Xml.Linq;
 
 namespace GameEngine
 {
     /// <summary>
-    /// Load the DAT game file and break it into tokens which can be either numbers or string
+    /// Load the DAT game file and break it into tokens which can be either numbers or string.
+    /// 
+    /// The DAT file can contain multiline comments, which will be stripped out.
     /// </summary>
     public static class DATToChunks
     {
-
         private static string[] tokens = null;
 
         public static void Load(string pFile)
@@ -32,20 +31,9 @@ namespace GameEngine
                         .ToArray();
         }
 
-
-        //private static string file = null;
         private static int pos = 0;
 
-        //public static void Load(string pFile)
-        //{
-        //    pos = 0;
-        //    file = File.ReadAllText(pFile).Trim();
-        //}
-
-        //static string[] le = new string[] { "\n", "\r" };
-
-
-        public static bool EOF { get { return !(pos < tokens.Length); } }
+        private static bool EOF { get { return !(pos < tokens.Length); } }
 
         /// <summary>
         /// Get the required number of DAT chunks as string

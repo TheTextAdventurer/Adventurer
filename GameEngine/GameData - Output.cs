@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
@@ -420,8 +419,8 @@ namespace GameEngine
 
                         sw.WriteLine("\"{0}\"\t\t{1}"
                             , w
-                            , !w.StartsWith("*") ? string.Format("/*Verb index {0}", vb)
-                                                 : string.Format("/*synonym of verb index {0}", vb)
+                            , !w.StartsWith("*") ? string.Format("/*Verb index {0}*/", vb)
+                                                 : string.Format("/*synonym of verb index {0}*/", vb)
                                                  );
 
                     }
@@ -432,8 +431,8 @@ namespace GameEngine
 
                         sw.WriteLine("\"{0}\"\t\t{1}"
                             , w
-                            , !w.StartsWith("*") ? string.Format("/*Noun index {0}", nn)
-                                                 : string.Format("/*synonym of noun index {0}", nn)
+                            , !w.StartsWith("*") ? string.Format("/*Noun index {0}*/", nn)
+                                                 : string.Format("/*synonym of noun index {0}*/", nn)
                                                  );
 
                     }
