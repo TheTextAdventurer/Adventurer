@@ -69,34 +69,34 @@ namespace GameEngine
             {
                 //write header
                 sw.WriteLine(string.Format("\"{0}\"", this.GameName));
-                sw.WriteLine(this.Items.Count(i => i.Moved()));
-                sw.WriteLine(this.BitFlags.Count());
-                sw.WriteLine(this.Counters.Count());
-                sw.WriteLine(this.SavedRooms.Count());
+                sw.WriteLine(this.Items.Count(i => i.Moved()) + "/*Moved items*/");
+                sw.WriteLine(this.BitFlags.Count() + "/*Bit flag count*/");
+                sw.WriteLine(this.Counters.Count() + "/*Counters count*/");
+                sw.WriteLine(this.SavedRooms.Count() + "/*Saved rooms count*/");
 
 
                 //get all the changed items
                 this.Items.Select((item, indx) => new { item, indx })
                     .Where(i => i.item.Moved())
-                    .All(i => { sw.WriteLine(i.indx); sw.WriteLine(i.item.Location); return true; });
+                    .All(i => { sw.WriteLine(i.indx  + "/*item index*/"); sw.WriteLine(i.item.Location + "/*Item location*/"); return true; });
 
                 this.BitFlags.Select((bf, indx) => new { bf, indx })
-                    .All(i => { sw.WriteLine(i.indx); sw.WriteLine(i.bf ? 1 : 0); return true; });
+                    .All(i => { sw.WriteLine(i.indx + "/*bitflag index*/"); sw.WriteLine((i.bf ? 1 : 0) + "/*bit flag value*/"); return true; });
 
                 this.Counters.Select((ct, indx) => new { ct, indx })
-                    .All(i => { sw.WriteLine(i.indx); sw.WriteLine(i.ct); return true; });
+                    .All(i => { sw.WriteLine(i.indx + "/*counter index*/"); sw.WriteLine(i.ct + "/*counter value*/"); return true; });
 
                 this.SavedRooms.Select((sr, indx) => new { sr, indx })
-                    .All(i => { sw.WriteLine(i.indx); sw.WriteLine(i.sr); return true; });
+                    .All(i => { sw.WriteLine(i.indx + "/*saved room index*/"); sw.WriteLine(i.sr + "/*saved room*/"); return true; });
 
 
-                sw.WriteLine(this.CurrentRoom);
-                sw.WriteLine(this.TakeSuccessful ? 1 : 0);
-                sw.WriteLine(this.CurrentCounter);
-                sw.WriteLine(this.LampLife);
-                sw.WriteLine(this.PlayerNoun);
-                sw.WriteLine(this.SavedRoom);
-                sw.WriteLine(this.TurnCounter);
+                sw.WriteLine(this.CurrentRoom + "/*Saved rooms count*/");
+                sw.WriteLine("{0} {1}", this.TakeSuccessful ? 1 : 0, "/*take successful*/");
+                sw.WriteLine(this.CurrentCounter + "/*current counter*/");
+                sw.WriteLine(this.LampLife + "/*lamp life*/");
+                sw.WriteLine(this.PlayerNoun + "/*player noun*/");
+                sw.WriteLine(this.SavedRoom + "/*saved room*/");
+                sw.WriteLine(this.TurnCounter + "/*turn counter*/");
 
             }
 
@@ -118,7 +118,7 @@ namespace GameEngine
             GameData gd = Load(pAdvGame);
 
             DATToChunks.Load(pSnapShot);
-            DATToChunks.getTokens(1);//skip the first line.
+            DATToChunks.getTokens(1);//skip the first line. 
 
             int[] header = DATToChunks.GetTokensAsInt(4);
 
