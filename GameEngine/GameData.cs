@@ -299,7 +299,7 @@ namespace GameEngine
                                 ,
                                 Conditions = new int[][] { new int[] { 2, itemCtr } }
                                 ,
-                                Actions = new int[][] { new int[] { 52, itemCtr, 0 } }
+                                Effects = new int[][] { new int[] { 52, itemCtr, 0 } }
                             }
                         );
 
@@ -315,7 +315,7 @@ namespace GameEngine
                                 ,
                                 Conditions = new int[][] { new int[] { 1, itemCtr } }
                                 ,
-                                Actions = new int[][] { new int[] { 53, itemCtr, 0 } }
+                                Effects = new int[][] { new int[] { 53, itemCtr, 0 } }
                             }
                         );
                 }
@@ -333,7 +333,7 @@ namespace GameEngine
             List<Action> childs = null;
             for (int i = Actions.Count() - 1; i >= 0; i--)
             {
-                if (Actions[i].Actions.Count(act => act[0] == 73) > 0)
+                if (Actions[i].Effects.Count(act => act[0] == 73) > 0)
                 {
                     int j = i + 1;
                     childs = new List<Action>();
@@ -365,7 +365,7 @@ namespace GameEngine
 
                 if (
                         Actions[i].Conditions.Length == 0
-                        && Actions[i].Actions.Length > 0
+                        && Actions[i].Effects.Length > 0
                         && Actions[i].Verb == 0
                         && Actions[i].Noun == 0
                         && Actions[i - 1].Verb > 0
@@ -675,8 +675,8 @@ namespace GameEngine
                                     .ToArray();
 
 
-                //action args are stored in conditions
-                int[] actarg = pData.Skip(1)
+                //effect args are stored in conditions
+                int[] effarg = pData.Skip(1)
                                     .Take(5)
                                     .Where(con => con % 20 == 0)
                                     .Select(con => con / 20)
@@ -685,7 +685,7 @@ namespace GameEngine
 
 
                 //get all four arguments
-                Actions = pData
+                Effects = pData
                                  .Skip(6)
                                  .Take(2)
                                    .Select(val =>
@@ -700,9 +700,9 @@ namespace GameEngine
 
                 int aaPos = 0;
                 //asign the action args to the action
-                foreach (int[] a in Actions)
+                foreach (int[] e in Effects)
                 {
-                    switch (a[0])
+                    switch (e[0])
                     {
                         //require 1 argument
                         case 52:
@@ -718,7 +718,7 @@ namespace GameEngine
                         case 83:
                         case 87:
                         case 79:    //set current counter
-                            a[1] = actarg[aaPos];
+                            e[1] = effarg[aaPos];
                             aaPos++;
                             break;
 
@@ -726,8 +726,8 @@ namespace GameEngine
                         case 62:
                         case 72:
                         case 75:
-                            a[1] = actarg[aaPos];
-                            a[2] = actarg[aaPos + 1];
+                            e[1] = effarg[aaPos];
+                            e[2] = effarg[aaPos + 1];
                             aaPos += 2;
                             break;
                     }
@@ -738,7 +738,7 @@ namespace GameEngine
             public int Verb { get; set; }
             public int Noun { get; set; }
             public int[][] Conditions { get; set; }
-            public int[][] Actions { get; set; }
+            public int[][] Effects { get; set; }
             public string Comment { get; set; }
             public Action[] Children { get; set; }
             List<string> Comments;
@@ -758,7 +758,7 @@ namespace GameEngine
                                 .ToArray();
 
 
-                int[] args = Actions
+                int[] args = Effects
                                 .SelectMany(a => a.Skip(1))
                                 .Where(a => a > 0)
                                 .Select(a => a * 20)
@@ -782,13 +782,13 @@ namespace GameEngine
 
                 int[] acts =
                     {
-                        Actions[0][0] > 0
-                            ? Actions [0][0] * 150 + Actions[1][0]
+                        Effects[0][0] > 0
+                            ? Effects [0][0] * 150 + Effects[1][0]
                             : 0
                         ,
 
-                        Actions[2][0] > 0
-                            ? Actions [2][0] * 150 + Actions[3][0]
+                        Effects[2][0] > 0
+                            ? Effects [2][0] * 150 + Effects[3][0]
                             : 0
 
                     };

@@ -11,112 +11,6 @@ namespace GameEngine
     public partial class GameData
     {
 
-        /// <summary>
-        /// Convert the game DAT file into XML
-        /// </summary>     
-        public void SaveAsUncommentedXML(string pFile)
-        {
-            DATToChunks.Load(pFile);
-
-            XElement gameData = new XElement("GameData");
-
-            string[] headerDesc =
-             { "Unknown"
-             , "NumItems"
-             , "NumActions"
-             , "NumNounVerbs"
-             , "NumRooms"
-             , "MaxCarry"
-             , "StartRoom"
-             , "TotalTreasures"
-             , "WordLength"
-             ,"LightDuration"
-             , "NumMessages"
-             ,"TreasureRoom"};
-
-
-            int[] header = DATToChunks.GetTokensAsInt(12);
-            gameData.Add
-                (
-                    new XElement("Header", header.Select((val, ind) => new XElement(String.Format("{0}", headerDesc[ind]), val)))
-                );
-
-            string[] actionsDesc = { "NounVerb", "Condition1", "Condition2", "Condition3", "Condition4", "Condition5", "Action1", "Action2", "Action3" };
-            gameData.Add
-                (
-                    new XElement("Actions",
-
-                        Enumerable.Range(0, header[2] + 1).
-                            Select(a => new XElement("Action", new XAttribute("Index", a), DATToChunks.GetTokensAsInt(8).Select((val, ind) => new XElement(String.Format("{0}", actionsDesc[ind]), val)))
-                            ))
-                );
-
-            gameData.Add
-                (
-                    new XElement("Words",
-
-                        Enumerable.Range(0, (header[3] + 1) * 2).
-                            Select(a => DATToChunks.getTokens(1).Select(val => new XElement("Word", val)))
-                            )
-                );
-
-
-            string[] roomDesc = { "North", "South", "East", "West", "Up", "Down", "Description" };
-            gameData.Add
-                (
-                    new XElement("Rooms",
-
-                        Enumerable.Range(0, header[4] + 1).
-                            Select(a =>
-                                        new XElement("Room"
-                                            , new XAttribute("Index", a)
-                                            , new object[] {
-                                             DATToChunks.getTokens(7).Select((val, ind) => new XElement(String.Format("{0}", roomDesc[ind]), val.Trim())) }
-                                             ))
-                            )
-                );
-
-
-
-            gameData.Add
-                (
-                    new XElement("Messages",
-                        Enumerable.Range(0, header[10] + 1).
-                            Select(a => new XElement("Message", new XAttribute("Index", a), DATToChunks.getTokens(1))))
-                );
-
-            string[] itemDescripion = { "Name", "Word" };
-            gameData.Add
-                (
-                    new XElement("Items",
-                        Enumerable.Range(0, header[1] + 1).
-                            Select(a => new XElement("Item",
-                                new XAttribute("Index", a),
-                                DATToChunks.getTokens(1).First().Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries)
-                                    .Select((v, i) => new XElement(itemDescripion[i], v))
-                                    , new XElement("Location", DATToChunks.GetTokensAsInt(1))
-                            )))
-                );
-
-            gameData.Add
-                (
-                    new XElement("Comments",
-
-                        Enumerable.Range(0, header[2] + 1).
-                            Select(a => new XElement("Comment", new XAttribute("Index", a), DATToChunks.getTokens(1))
-                            ))
-                );
-
-            string[] commentDesc = { "Version", "AdventureNumber", "Unkown" };
-            ; gameData.Add
-                 (
-                     new XElement("Footer", DATToChunks.getTokens(3).Select((val, ind) => new XElement(String.Format("{0}", commentDesc[ind]), val)))
-                 );
-
-            gameData.Save(GameName + ".unformatted.xml");
-
-        }
-
         #region SaveAsCommentedXML
         /// <summary>
         /// Convert the game DAT file into XML with accompanying comments
@@ -317,10 +211,10 @@ namespace GameEngine
                                     )
                         ))
 
-                        , new XElement("ActionComponents"
-                            , pAction.Actions.Where(act => act[0] > 0)
-                                .Select(act=> new XElement("Action"
-                                    , new XElement("Argument", act[0])
+                        , new XElement("Effects"
+                            , pAction.Effects.Where(act => act[0] > 0)
+                                .Select(act=> new XElement("Effect"
+                                    , new XElement("EffectID", act[0])
                                     , new XElement("Description",
 
                                             //this beast of a statement determines how the description of the

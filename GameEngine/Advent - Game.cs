@@ -85,7 +85,7 @@ namespace GameEngine
                 {
                     //direction being moved in exists
                     //note the subtratcion - north is always 1, remove 1
-                    PerformActionComponent(54, _GameData.Rooms[_GameData.CurrentRoom].Exits[(int)iN - 1], 0);
+                    PerformActionEffect(54, _GameData.Rooms[_GameData.CurrentRoom].Exits[(int)iN - 1], 0);
 
                     SendGameMessages(
                         IsDark()
@@ -100,7 +100,7 @@ namespace GameEngine
                     if (IsDark())
                     {
                         SendGameMessages(_Sysmessages[18], true); // "I fell down and broke my neck.\r\n"
-                        PerformActionComponent(63, 0, 0);   //game over
+                        PerformActionEffect(63, 0, 0);   //game over
                     }
                     else
                         SendGameMessages(_Sysmessages[2], true);    //I can't go in that direction
@@ -173,8 +173,8 @@ namespace GameEngine
             if (ActionTest(pAction.Conditions))
             {
                 //step through the components
-                foreach (int[] act in pAction.Actions.Where(a => a[0] > 0))
-                    PerformActionComponent(act[0], act[1], act[2]);
+                foreach (int[] act in pAction.Effects.Where(a => a[0] > 0))
+                    PerformActionEffect(act[0], act[1], act[2]);
 
                 return true;
             }
@@ -222,7 +222,7 @@ namespace GameEngine
                 //do more stuff
                 if (_GameData.EndGame)
                 {
-                    PerformActionComponent(64, 0, 0); //look
+                    PerformActionEffect(64, 0, 0); //look
                     return;
                 }
 
@@ -268,7 +268,7 @@ namespace GameEngine
                     SendGameMessages(_Sysmessages[20], false); //light growing dim
             }
 
-            PerformActionComponent(64, 0, 0); //look
+            PerformActionEffect(64, 0, 0); //look
         }
 
         /// <summary>
@@ -419,22 +419,22 @@ namespace GameEngine
         }
 
         /// <summary>
-        /// Perform the provded action component
+        /// Perform the provded action effect
         /// </summary>
-        /// <param name="pAct">Action</param>
+        /// <param name="pEffectID">Effect</param>
         /// <param name="pArg1">Action argument 1</param>
         /// <param name="pArg2">Action argument 1</param>
-        private static void PerformActionComponent(int pAct, int pArg1, int pArg2)
+        private static void PerformActionEffect(int pEffectID, int pArg1, int pArg2)
         {
 
-            if (pAct < 52 || pAct > 101)
+            if (pEffectID < 52 || pEffectID > 101)
             {
-                SendGameMessages(_GameData.Messages[pAct - (pAct > 101 ? 50 : 0)], false);
-                PerformActionComponent(86, 0, 0);//carriage return
+                SendGameMessages(_GameData.Messages[pEffectID - (pEffectID > 101 ? 50 : 0)], false);
+                PerformActionEffect(86, 0, 0);//carriage return
             }
             else
             {
-                switch (pAct)
+                switch (pEffectID)
                 {
 
                     case 52: //get item, check if can carry
@@ -454,7 +454,7 @@ namespace GameEngine
 
                     case 54: //move room
                         _GameData.CurrentRoom = pArg1;
-                        PerformActionComponent(64, 0, 0);
+                        PerformActionEffect(64, 0, 0);
                         break;
 
                     case 55: //Item <arg> is removed from the game (put in room 0)
@@ -479,7 +479,7 @@ namespace GameEngine
                         break;
 
                     case 61: //Death, clear dark flag, move to last room NOT GAME OVER, move to limbo room
-                        PerformActionComponent(57, 0, 0);
+                        PerformActionEffect(57, 0, 0);
                         _GameData.CurrentRoom = _GameData.Rooms.Count() - 1;
                         SendGameMessages(_Sysmessages[24], false);
                         break;
@@ -536,7 +536,7 @@ namespace GameEngine
                         if (storedItems == _GameData.Header.TotalTreasures)
                         {
                             SendGameMessages(_Sysmessages[26], true);
-                            PerformActionComponent(63, 0, 0);
+                            PerformActionEffect(63, 0, 0);
                         }
 
                         break;
@@ -552,8 +552,8 @@ namespace GameEngine
                                         ? _Sysmessages[12]
                                         : String.Join(", ", items)), false);
 
-                        PerformActionComponent(86, 0, 0);
-                        PerformActionComponent(86, 0, 0);
+                        PerformActionEffect(86, 0, 0);
+                        PerformActionEffect(86, 0, 0);
 
                         break;
 
@@ -579,7 +579,7 @@ namespace GameEngine
                     case 71: //save game
 
                         SendGameMessages(string.Format("Game {0} saved", _GameData.SaveSnapshot()), true);
-                        PerformActionComponent(86, 0, 0);   //carriage return
+                        PerformActionEffect(86, 0, 0);   //carriage return
                         break;
 
                     case 72: // swap item locations
