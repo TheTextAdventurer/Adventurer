@@ -31,7 +31,7 @@ namespace Adventurer
 
 
         //load save game/load game/output friendly xml/output raw xml/display turn counter/show help/robot/output as commented DAT
-        static readonly string[] flags = { "-l", "-g", "-f", "-r", "-t", "-h", "-b", "-c" };
+        static readonly string[] flags = { "-l", "-g", "-f", "-r", "-t", "-h",  "-c" };
 
         /// <summary>
         /// Returns the argument provided with the specified flag
@@ -85,7 +85,7 @@ namespace Adventurer
                     g.SaveAsCommentedXML();
                     return;
                 }
-                else if ((arg = getFlagArg(flags[7], args)) != null) //formatted output of specified game file
+                else if ((arg = getFlagArg(flags[6], args)) != null) //formatted output of specified game file
                 {
                     GameData.SaveAsCommentedDat(arg);
                     return;
@@ -116,9 +116,6 @@ namespace Adventurer
 
                 Console.Title = "Playing: " + Advent.GameName;
 
-                //Enable robot
-                if (((arg = getFlagArg(flags[6], args)) != null) == true)
-                    Advent.RobotInit(arg);
 
                 #endregion
 
@@ -127,15 +124,10 @@ namespace Adventurer
                 {
 
                     Console.Write(Advent.PlayerPrompt);
-
-                    Advent.RobotBegin();
-
-                   
-
+                                 
                     Advent.ProcessText(userInput = Console.ReadLine());
 
-                    Advent.RobotEnd(userInput);
-
+    
                 } while (!Advent.ISGameOver);
 
                 Output();
@@ -145,8 +137,6 @@ namespace Adventurer
                 ErrorBox(6, 6, 60, 10, e.Message);
             }
 
-            //if it's enabled, save it
-            Advent.RobotSave();
 
             //write the final bar
             string exitmsg = "-Press enter to exit-";

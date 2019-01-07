@@ -20,8 +20,6 @@ namespace GameEngine
         /// </remarks>
         public static void ProcessText(string pInput)
         {
-
-            RobotBegin();
             _GameData.TurnCounter++;
             SendGameMessages("", true);
 
@@ -38,7 +36,7 @@ namespace GameEngine
                 V = spl[0].ToUpper(); ;
                 N = spl[1].ToUpper(); ;
             }
-            catch (Exception e) { }
+            catch { }
 
             if (V != null)
             { 
