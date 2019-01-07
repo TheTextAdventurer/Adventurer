@@ -13,7 +13,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Advent - Events.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Advent - Game Variables.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Advent - Game.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Advent - Undo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Advent - IO.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Advent - Robot.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DATToChunks.cs" />

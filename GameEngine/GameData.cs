@@ -25,10 +25,7 @@ namespace GameEngine
         public string GameName = null;
         public int TurnCounter { get; set; }
 
-        public UndoBlock CurrentUndoBlock;
-        public bool RecordUndo { get; set; }
-        public List<UndoBlock> UndoHistory { get; set; }
-        public int UndoPosition { get; set; }
+
 
         private string CurrentFolder
         {
@@ -42,17 +39,12 @@ namespace GameEngine
 
         public GameData()
         {
-            RecordUndo = false;
             TakeSuccessful = false;
             BitFlags = new bool[32];
             Counters = new int[32];
             SavedRooms = new int[32];
             PlayerNoun = null;
             EndGame = false;
-            RecordUndo = true;
-            CurrentUndoBlock = new UndoBlock();
-            UndoHistory = new List<UndoBlock>();
-            UndoPosition = -1;
         }
 
         /// <summary>
@@ -425,32 +417,6 @@ namespace GameEngine
 
             gd.Footer = new GameFooter(DATToChunks.GetTokensAsInt(3));
 
-            #region create first undo
-
-            gd.RecordUndo = true;
-            gd.BeginUndo();
-
-            gd.CurrentRoom = gd.Header.StartRoom;
-            gd.TakeSuccessful = false;
-            gd.CurrentCounter = 0;
-            gd.LampLife = gd.Header.LightDuration;
-            gd.PlayerNoun = "";
-            gd.SavedRoom = 0;
-            gd.EndGame = false;
-            gd.UndoPosition = -1;
-
-
-            for (ctr = 0; ctr < gd.BitFlags.Length; ctr++)
-                gd.ChangeBitFlag(ctr, gd.BitFlags[ctr]);
-
-            for (ctr = 0; ctr < gd.Counters.Length; ctr++)
-                gd.ChangeCounter(ctr, gd.Counters[ctr]);
-
-            for (ctr = 0; ctr < gd.Items.Count(); ctr++)
-                gd.ChangeItemLocation(ctr, gd.Items[ctr].Location);
-
-            gd.EndUndo();
-            #endregion
 
             return gd;
 
@@ -473,7 +439,6 @@ namespace GameEngine
             get { return _CurrentRoom; }
             set
             {
-                AddToCurrentUndoBlock(ChangeType.Update, ChangeItem.CurrentRoom, ChangeItemDataType.Int, (object)value, (object)_CurrentRoom, 0);
                 _CurrentRoom = value;
             }
         }
@@ -484,7 +449,6 @@ namespace GameEngine
             get { return _takeSuccessful; }
             set
             {
-                AddToCurrentUndoBlock(ChangeType.Update, ChangeItem.TakeSuccessful, ChangeItemDataType.Int, (object)value, (object)_takeSuccessful, 0);
                 _takeSuccessful = value;
             }
         }
@@ -495,7 +459,6 @@ namespace GameEngine
             get { return _currentCounter; }
             set
             {
-                AddToCurrentUndoBlock(ChangeType.Update, ChangeItem.CurrentCount, ChangeItemDataType.Int, (object)value, (object)_currentCounter, 0);
                 _currentCounter = value;
             }
         }
@@ -506,7 +469,6 @@ namespace GameEngine
             get { return _lampLife; }
             set
             {
-                AddToCurrentUndoBlock(ChangeType.Update, ChangeItem.LampLife, ChangeItemDataType.Int, (object)value, (object)_lampLife, 0);
                 _lampLife = value;
             }
         }
@@ -517,7 +479,6 @@ namespace GameEngine
             get { return _playerNoun; }
             set
             {
-                AddToCurrentUndoBlock(ChangeType.Update, ChangeItem.PlayerNoun, ChangeItemDataType.String, (object)value, (object)_playerNoun, 0);
                 _playerNoun = value;
             }
         }
@@ -528,7 +489,6 @@ namespace GameEngine
             get { return _savedRoom; }
             set
             {
-                AddToCurrentUndoBlock(ChangeType.Update, ChangeItem.SavedRoom, ChangeItemDataType.Int, (object)value, (object)_savedRoom, 0);
                 _savedRoom = value;
             }
         }
@@ -539,7 +499,6 @@ namespace GameEngine
             get { return _endGame; }
             set
             {
-                AddToCurrentUndoBlock(ChangeType.Update, ChangeItem.EndGame, ChangeItemDataType.Bool, (object)value, (object)_endGame, 0);
                 _endGame = value;
             }
         }
@@ -549,112 +508,23 @@ namespace GameEngine
         #region undo methods
 
 
-        public void SetCurrentUndo(int pIndex)
-        {
-            CurrentUndoBlock = UndoHistory[pIndex];
-        }
-
-        private void AddToCurrentUndoBlock(ChangeType pChanged, ChangeItem pItem, ChangeItemDataType pDataType, object pNewData, object pOldData, int pIndex)
-        {
-            if (RecordUndo)
-                CurrentUndoBlock.Add(new ChangeRepresentationObject(pChanged, pItem, pDataType, pNewData, pOldData, pIndex));
-        }
-
-
-        public void BeginUndo()
-        {
-            CurrentUndoBlock = new UndoBlock();
-        }
-
-        public void EndUndo()
-        {
-            UndoHistory.Add(CurrentUndoBlock);
-            UndoPosition = UndoHistory.Count() - 1;
-        }
 
         public void ChangeItemLocation(int pIndex, int pLocation)
         {
-            AddToCurrentUndoBlock(ChangeType.Update, ChangeItem.Item, ChangeItemDataType.Int, (object)pLocation, (Object)Items[pIndex].Location, pIndex);
-
             Items[pIndex].Location = pLocation;
         }
 
         public void ChangeBitFlag(int pIndex, bool pVal)
         {
-            AddToCurrentUndoBlock(ChangeType.Update, ChangeItem.BitFlag, ChangeItemDataType.Bool, (object)pVal, (object)BitFlags[pIndex], pIndex);
             BitFlags[pIndex] = pVal;
         }
 
         public void ChangeCounter(int pIndex, int pVal)
         {
-            AddToCurrentUndoBlock(ChangeType.Update, ChangeItem.Counter, ChangeItemDataType.Bool, (object)pVal, (object)Counters[pIndex], pIndex);
             Counters[pIndex] = pVal;
         }
 
-        public class UndoBlock
-        {
-
-            public UndoBlock()
-            {
-                Block = new List<ChangeRepresentationObject>();
-            }
-
-            public List<ChangeRepresentationObject> Block { get; set; }
-
-            public void Add(ChangeRepresentationObject pCRO)
-            {
-                Block.Add(pCRO);
-            }
-
-        }
-
-        public enum ChangeType
-        {
-            Update
-            , Insert
-        }
-
-        public enum ChangeItem
-        {
-            Item
-            , BitFlag
-            , Counter
-            , SavedRooms
-            , CurrentRoom
-            , TakeSuccessful
-            , CurrentCount
-            , LampLife
-            , PlayerNoun
-            , SavedRoom
-            , EndGame
-        }
-
-        public enum ChangeItemDataType
-        {
-            Int
-            , String
-            , Bool
-        }
-
-        public class ChangeRepresentationObject
-        {
-            public ChangeType Changed;
-            public ChangeItem Item;
-            public ChangeItemDataType DataType;
-            public int Index;
-            public object NewData;
-            public object OldData;
-
-            public ChangeRepresentationObject(ChangeType pChanged, ChangeItem pItem, ChangeItemDataType pDataType, object pNewData, object pOldData, int pIndex)
-            {
-                Changed = pChanged;
-                Item = pItem;
-                DataType = pDataType;
-                NewData = pNewData;
-                OldData = pOldData;
-                Index = pIndex;
-            }
-        }
+    
         #endregion
 
         #region game structure classes
@@ -799,7 +669,6 @@ namespace GameEngine
                 //5 conditions
                 Conditions = pData.Skip(1)
                                     .Take(5)
-                                    //.Where(con => con % 20 > 0)
                                     .Select(con => con % 20 > 0
                                                     ? new int[] { con % 20, con / 20 }
                                                     : new int[] { 0, 0 })
@@ -819,7 +688,6 @@ namespace GameEngine
                 Actions = pData
                                  .Skip(6)
                                  .Take(2)
-                                   //.Where(val => val > 0)
                                    .Select(val =>
                                             val > 0 ?
                                                 val % 150 > 0

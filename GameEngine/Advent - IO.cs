@@ -12,9 +12,7 @@
         public static void LoadGame(string pFile)
         {
             _GameData = GameData.Load(pFile);
-            _GameData.BeginUndo();
             SearchActions(0, 0);
-            _GameData.EndUndo();
         }
 
         /// <summary>
