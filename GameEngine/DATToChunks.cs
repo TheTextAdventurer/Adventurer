@@ -29,6 +29,8 @@ namespace GameEngine
                         .Where(m => !m.ToString().StartsWith("/"))//remove the comments
                         .Select(m => m.ToString().Trim(new char[] { '"' }))
                         .ToArray();
+
+            pos = 0;
         }
 
         private static int pos = 0;

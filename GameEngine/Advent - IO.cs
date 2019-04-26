@@ -12,9 +12,7 @@
         public static void LoadGame(string pFile)
         {
             _GameData = GameData.Load(pFile);
-            _GameData.BeginUndo();
             SearchActions(0, 0);
-            _GameData.EndUndo();
         }
 
         /// <summary>
@@ -25,7 +23,7 @@
         public static void RestoreGame(string pAdvGame, string pSnapShot)
         {
             _GameData = GameData.LoadSnapShot(pAdvGame, pSnapShot);
-            PerformActionComponent(64, 0, 0);//look
+            PerformActionEffect(64, 0, 0);//look
         }
     }
 }

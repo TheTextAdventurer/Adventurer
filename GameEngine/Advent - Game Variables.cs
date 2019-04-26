@@ -12,9 +12,9 @@ namespace GameEngine
 
         static GameData _GameData = null;
 
-        static public string GameName { get { return _GameData.GameName; } }
-        static public bool ISGameOver { get { return _GameData.EndGame; } }
-        static public int TurnCounter { get { return _GameData.TurnCounter; } }
+        static public string GameName => _GameData.GameName;
+        static public bool ISGameOver => _GameData.EndGame;
+        static public int TurnCounter => _GameData.TurnCounter;
 
     }
 }

@@ -30,8 +30,8 @@ namespace Adventurer
 
 
 
-        //load save game/load game/output friendly xml/output raw xml/display turn counter/show help/robot/output as commented DAT
-        static readonly string[] flags = { "-l", "-g", "-f", "-r", "-t", "-h", "-b", "-c" };
+        //load save game/load game/output as xml/display turn counter/show help/output as commented DAT
+        static readonly string[] flags = { "-l", "-g", "-x", "-t", "-h",  "-c" };
 
         /// <summary>
         /// Returns the argument provided with the specified flag
@@ -73,19 +73,13 @@ namespace Adventurer
                     OutputHelp();
                     return;
                 }
-                else if ((arg = getFlagArg(flags[3], args)) != null) //raw XML output of specified game file
-                {
-                    var g = GameData.Load(arg);
-                    g.SaveAsUncommentedXML(arg);
-                    return;
-                }
                 else if ((arg = getFlagArg(flags[2], args)) != null) //formatted output of specified game file
                 {
                     var g = GameData.Load(arg);
                     g.SaveAsCommentedXML();
                     return;
                 }
-                else if ((arg = getFlagArg(flags[7], args)) != null) //formatted output of specified game file
+                else if ((arg = getFlagArg(flags[5], args)) != null) //formatted output of specified game file
                 {
                     GameData.SaveAsCommentedDat(arg);
                     return;
@@ -93,7 +87,7 @@ namespace Adventurer
 
                 arg = getFlagArg(flags[1], args);//Game to load
                 arg1 = getFlagArg(flags[0], args);//Save game to restore
-                _TurnCounter = getFlagArg(flags[4], args) != null;
+                _TurnCounter = getFlagArg(flags[3], args) != null;
                 if (arg != null)
                 {
 
@@ -116,9 +110,6 @@ namespace Adventurer
 
                 Console.Title = "Playing: " + Advent.GameName;
 
-                //Enable robot
-                if (((arg = getFlagArg(flags[6], args)) != null) == true)
-                    Advent.RobotInit(arg);
 
                 #endregion
 
@@ -127,15 +118,10 @@ namespace Adventurer
                 {
 
                     Console.Write(Advent.PlayerPrompt);
-
-                    Advent.RobotBegin();
-
-                   
-
+                                 
                     Advent.ProcessText(userInput = Console.ReadLine());
 
-                    Advent.RobotEnd(userInput);
-
+    
                 } while (!Advent.ISGameOver);
 
                 Output();
@@ -145,8 +131,6 @@ namespace Adventurer
                 ErrorBox(6, 6, 60, 10, e.Message);
             }
 
-            //if it's enabled, save it
-            Advent.RobotSave();
 
             //write the final bar
             string exitmsg = "-Press enter to exit-";
@@ -248,11 +232,9 @@ namespace Adventurer
             Console.WriteLine("\t-g\tLoad DAT file -gAdv01.dat");
             Console.WriteLine("\t-g\tSpecify game save file -lAdv01.sav - must be used with -g");
             Console.WriteLine("\t-t\tDisplay turn counter in game");
-            Console.WriteLine("\t-f\tOutput specified game in commented XML -fAdv01.dat");
-            Console.WriteLine("\t-r\tOutput specified game in uncommented XML -rAdv01.dat");
+            Console.WriteLine("\t-f\tOutput specified game in XML -xAdv01.dat");
             Console.WriteLine("\t-c\tOutput specified game in formatted dat -cAdv01.dat");
             Console.WriteLine("\t-h\tDisplay help");
-            Console.WriteLine("\t-b\tRecord game, must specify output name -bRecorded");
             Console.WriteLine();
             Console.WriteLine("This application is distributed under the GNU GENERAL PUBLIC LICENSE");
             Console.Write("Website: ");
