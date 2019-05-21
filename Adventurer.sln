@@ -1,14 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.489
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adventurer", "Adventurer\Adventurer.csproj", "{A6A15D2F-070F-4564-92A3-CC09BF99941B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdventurerDOS", "Adventurer\AdventurerDOS.csproj", "{A6A15D2F-070F-4564-92A3-CC09BF99941B}"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "GameEngine", "GameEngine\GameEngine.shproj", "{99D0F20C-A019-4A08-9A3E-D75ABF1E6E67}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdventurerWIN", "AdventurerWIN\AdventurerWIN.csproj", "{57C235C9-E3E6-44FC-AF75-77FBBB121A3D}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		GameEngine\GameEngine.projitems*{57c235c9-e3e6-44fc-af75-77fbbb121a3d}*SharedItemsImports = 4
 		GameEngine\GameEngine.projitems*{99d0f20c-a019-4a08-9a3e-d75abf1e6e67}*SharedItemsImports = 13
 		GameEngine\GameEngine.projitems*{a6a15d2f-070f-4564-92a3-cc09bf99941b}*SharedItemsImports = 4
 	EndGlobalSection
@@ -21,6 +24,10 @@ Global
 		{A6A15D2F-070F-4564-92A3-CC09BF99941B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A6A15D2F-070F-4564-92A3-CC09BF99941B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A6A15D2F-070F-4564-92A3-CC09BF99941B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{57C235C9-E3E6-44FC-AF75-77FBBB121A3D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57C235C9-E3E6-44FC-AF75-77FBBB121A3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57C235C9-E3E6-44FC-AF75-77FBBB121A3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57C235C9-E3E6-44FC-AF75-77FBBB121A3D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
