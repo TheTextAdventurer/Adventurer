@@ -241,7 +241,7 @@ namespace GameEngine
                 gd.Rooms[ctr] = new Room(DATToChunks.GetTokensAsInt(6), DATToChunks.getTokens(1).First());
 
 
-                gd.Rooms[ctr].Description += "\n\n" + _ObviousExits;
+                gd.Rooms[ctr].Description += Environment.NewLine + Environment.NewLine + _ObviousExits;
 
                 if (gd.Rooms[ctr].Exits.Count(e => e > 0) > 0)
                 {
@@ -595,7 +595,7 @@ namespace GameEngine
             /// <returns></returns>
             public override string ToString()
             {
-                return string.Format("\"{0}\"\r\n{1}", Description, Exits.Select(i => i.ToString() + "\r\n"));
+                return string.Format("\"{0}\"\r\n{1}", Description, Exits.Select(i => i.ToString() + Environment.NewLine));
             }
 
         }
@@ -811,7 +811,7 @@ namespace GameEngine
 
             public override string ToString()
             {
-                return String.Join("\r\n", ToDat().Select(c => c.ToString()));
+                return String.Join(Environment.NewLine, ToDat().Select(c => c.ToString()));
 
             }
 

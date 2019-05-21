@@ -33,8 +33,8 @@ namespace GameEngine
             try
             {
                 string[] spl = pInput.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                V = spl[0].ToUpper(); ;
-                N = spl[1].ToUpper(); ;
+                V = ShrinkWord(spl[0].ToUpper());
+                N = ShrinkWord(spl[1].ToUpper());
             }
             catch { }
 
@@ -482,6 +482,7 @@ namespace GameEngine
                         PerformActionEffect(57, 0, 0);
                         _GameData.CurrentRoom = _GameData.Rooms.Count() - 1;
                         SendGameMessages(_Sysmessages[24], false);
+                        SendGameOver();
                         break;
 
                     case 62: //item is moved to room
@@ -491,6 +492,7 @@ namespace GameEngine
                     case 63: //game over
                         _GameData.EndGame = true;
                         SendGameMessages(_Sysmessages[25], false);
+                        SendGameOver();
                         break;
 
                     case 64: //look
@@ -576,10 +578,8 @@ namespace GameEngine
                         _RoomView = null;
                         break;
 
-                    case 71: //save game
-
-                        SendGameMessages(string.Format("Game {0} saved", _GameData.SaveSnapshot()), true);
-                        PerformActionEffect(86, 0, 0);   //carriage return
+                    case 71: //save game                        
+                        SaveGame();
                         break;
 
                     case 72: // swap item locations
@@ -605,7 +605,7 @@ namespace GameEngine
                         break;
 
                     case 78: //output current counter
-                        SendGameMessages(_GameData.CurrentCounter + "\r\n", false);
+                        SendGameMessages(_GameData.CurrentCounter + Environment.NewLine, false);
                         break;
 
                     case 79: //set current counter value
@@ -639,11 +639,11 @@ namespace GameEngine
                         break;
 
                     case 85: //echo noun
-                        SendGameMessages(_GameData.PlayerNoun + "\r\n", false);
+                        SendGameMessages(_GameData.PlayerNoun + Environment.NewLine, false);
                         break;
 
                     case 86: //Carriage Return"
-                        SendGameMessages("\r\n", false);
+                        SendGameMessages(Environment.NewLine, false);
                         break;
 
                     case 87: //Swap current location value with backup location-swap value

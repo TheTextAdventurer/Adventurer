@@ -8,6 +8,8 @@ namespace GameEngine
     static partial class Advent
     {
 
+        #region room view
+
         public static event EventHandler<Roomview> RoomView;
 
         /// <summary>
@@ -16,18 +18,6 @@ namespace GameEngine
         private static void SetRoomView()
         {
             RoomView?.Invoke(null, new Roomview(_RoomView, _RoomItems));
-        }
-
-        public static event EventHandler<GameOuput> GameMessages;
-
-        /// <summary>
-        /// Send a message out
-        /// </summary>
-        /// <param name="pMessage">Message to display</param>
-        /// <param name="pClearOutput">Clear output before displaying message</param>
-        private static void SendGameMessages(string pMessage, bool pClearOutput)
-        {
-            GameMessages?.Invoke(null, new GameOuput(pMessage, pClearOutput));
         }
 
         public class Roomview : EventArgs
@@ -42,6 +32,23 @@ namespace GameEngine
             }
         }
 
+        #endregion
+
+        #region Game Messages
+
+        public static event EventHandler<GameOuput> GameMessages;
+
+        /// <summary>
+        /// Send a message out
+        /// </summary>
+        /// <param name="pMessage">Message to display</param>
+        /// <param name="pClearOutput">Clear output before displaying message</param>
+        private static void SendGameMessages(string pMessage, bool pClearOutput)
+        {
+            GameMessages?.Invoke(null, new GameOuput(pMessage, pClearOutput));
+        }
+
+
         public class GameOuput : EventArgs
         {
             public string Message { get; private set; }
@@ -53,6 +60,18 @@ namespace GameEngine
                 Refresh = pRefresh;
             }
         }
+
+        #endregion
+
+        #region game over
+
+        public static event EventHandler<EventArgs> GameOver;
+
+        private static void SendGameOver()
+        {
+            GameOver?.Invoke(null,null);
+        }
+        #endregion
 
     }
 }

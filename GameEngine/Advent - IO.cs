@@ -25,5 +25,15 @@
             _GameData = GameData.LoadSnapShot(pAdvGame, pSnapShot);
             PerformActionEffect(64, 0, 0);//look
         }
+
+        /// <summary>
+        /// Save a game
+        /// </summary>
+        public static void SaveGame()
+        {
+            SendGameMessages(string.Format("Game saved: {0}", _GameData.SaveSnapshot()), true);
+            PerformActionEffect(86, 0, 0);   //carriage return
+        }
+
     }
 }
