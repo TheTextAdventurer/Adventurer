@@ -1,10 +1,8 @@
 # Adventurer
-*A C# Intrepreter for [Scott Adams adventure games](http://www.msadams.com/adventures.htm) encoded in the **ScottFree** format*. 
+*A C# Interpreter for [Scott Adams adventure games](http://www.msadams.com/adventures.htm) encoded in the **ScottFree** format*.  Two flavours exist: a console version (AdventurerDOS) and a Windows versions (AdventurerWIN).
 
 ## About
 This project was built with Visual Studio Community using C# with .Net Framework 4.6.1, and is a tribute to Scott Adams. His games where the first I ever played on the TRS-80 in the early 1980s.
-
-The main difference between this interpreter and the original is the addition of **undo** and **redo** functionality. I just threw them in as it was in interesting thing to do ;)
 
 Currently, [Brian Howarth's](https://en.wikipedia.org/wiki/Brian_Howarth) Mysterious Adventures aren't fully supported - I haven't fully tested them yet, though they should work, but some features won't be supported.
 
@@ -17,7 +15,7 @@ The original Scott Adams games can be [downloaded from his website](http://www.m
 
 Please note, this interpreter will only load the games in the **ScottFree** format.
 
-## Usage
+## AdventurerDOS Usage
 
 Exe arguments:
 
@@ -32,13 +30,9 @@ Whilst playing, save a game by typing:
 
 > SAVE GAME
 
-To undo a move:
+##AdventurerWIN Usage
+Pretty straightforwards, I think.
 
-> #Undo
-
-And redo a move: 
-
-> #Redo
 
 ## Video Walkthroughs
 
