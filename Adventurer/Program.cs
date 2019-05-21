@@ -5,7 +5,7 @@ using System.Xml.Linq;
 using GameEngine;
 
 
-namespace Adventurer
+namespace AdventurerDOS
 {
     class Program
     {
