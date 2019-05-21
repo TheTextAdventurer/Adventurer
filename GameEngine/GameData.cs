@@ -24,7 +24,7 @@ namespace GameEngine
         public string[] Messages = null;
         public string GameName = null;
         public int TurnCounter { get; set; }
-
+        public int Seed { get; set; } = Guid.NewGuid().GetHashCode();
 
 
         private string CurrentFolder
@@ -61,32 +61,56 @@ namespace GameEngine
             {
                 //write header
                 sw.WriteLine(string.Format("\"{0}\"", this.GameName));
-                sw.WriteLine(this.Items.Count(i => i.Moved()) + "/*Moved items*/");
-                sw.WriteLine(this.BitFlags.Count() + "/*Bit flag count*/");
-                sw.WriteLine(this.Counters.Count() + "/*Counters count*/");
-                sw.WriteLine(this.SavedRooms.Count() + "/*Saved rooms count*/");
+                sw.WriteLine(string.Format("{0} /*Seed*/", this.Seed));
+
+                int[] header = { this.Items.Count(i => i.Moved()), this.BitFlags.Count(), this.Counters.Count(), this.SavedRooms.Count() };
+
+                sw.WriteLine(header[0] + "/*Moved items*/");
+                sw.WriteLine(header[1] + "/*Bit flag count*/");
+                sw.WriteLine(header[2] + "/*Counters count*/");
+                sw.WriteLine(header[3] + "/*Saved rooms count*/");
 
 
-                //get all the changed items
-                this.Items.Select((item, indx) => new { item, indx })
-                    .Where(i => i.item.Moved())
-                    .All(i => { sw.WriteLine(i.indx  + "/*item index*/"); sw.WriteLine(i.item.Location + "/*Item location*/"); return true; });
+                if (header[0] > 0)
+                {
+                    sw.WriteLine("/*Moved Items*/");
+                    //get all the changed items
+                    this.Items.Select((item, indx) => new { item, indx })
+                        .Where(i => i.item.Moved())
+                        .All(i => { sw.Write(i.indx + " "+ i.item.Location + " "); return true; });
+                    sw.WriteLine();
+                }
 
-                this.BitFlags.Select((bf, indx) => new { bf, indx })
-                    .All(i => { sw.WriteLine(i.indx + "/*bitflag index*/"); sw.WriteLine((i.bf ? 1 : 0) + "/*bit flag value*/"); return true; });
+                if (header[1] > 0)
+                {
+                    sw.WriteLine("/*Bit flags*/");
+                    this.BitFlags.Select((bf, indx) => new { bf, indx })
+                        .All(i => { sw.Write(i.indx + " "+ (i.bf ? 1 : 0) + " "); return true; });
+                    sw.WriteLine();
+                }
 
-                this.Counters.Select((ct, indx) => new { ct, indx })
-                    .All(i => { sw.WriteLine(i.indx + "/*counter index*/"); sw.WriteLine(i.ct + "/*counter value*/"); return true; });
 
-                this.SavedRooms.Select((sr, indx) => new { sr, indx })
-                    .All(i => { sw.WriteLine(i.indx + "/*saved room index*/"); sw.WriteLine(i.sr + "/*saved room*/"); return true; });
+                if (header[2] > 0)
+                {
+                    sw.WriteLine("/*Counters*/");
+                    this.Counters.Select((ct, indx) => new { ct, indx })
+                        .All(i => { sw.Write(i.indx + " " + i.ct + " " ); return true; });
+                    sw.WriteLine();
+                }
 
+                if (header[2] > 0)
+                {
+                    sw.WriteLine("/*Saved Rooms*/");
+                    this.SavedRooms.Select((sr, indx) => new { sr, indx })
+                        .All(i => { sw.Write(i.indx + " " + i.sr + " "); return true; });
+                    sw.WriteLine();
+                }
 
-                sw.WriteLine(this.CurrentRoom + "/*Saved rooms count*/");
+                sw.WriteLine(this.CurrentRoom + "/*CurrentRoom*/");
                 sw.WriteLine("{0} {1}", this.TakeSuccessful ? 1 : 0, "/*take successful*/");
                 sw.WriteLine(this.CurrentCounter + "/*current counter*/");
                 sw.WriteLine(this.LampLife + "/*lamp life*/");
-                sw.WriteLine(this.PlayerNoun + "/*player noun*/");
+                sw.WriteLine(this.PlayerNoun ?? 0 + "/*player noun*/");
                 sw.WriteLine(this.SavedRoom + "/*saved room*/");
                 sw.WriteLine(this.TurnCounter + "/*turn counter*/");
 
@@ -110,7 +134,8 @@ namespace GameEngine
             GameData gd = Load(pAdvGame);
 
             DATToChunks.Load(pSnapShot);
-            DATToChunks.getTokens(1);//skip the first line. 
+            DATToChunks.getTokens(1);//Game name, skip it.
+            gd.Seed = DATToChunks.GetTokensAsInt(1).First(); //get the seed;
 
             int[] header = DATToChunks.GetTokensAsInt(4);
 

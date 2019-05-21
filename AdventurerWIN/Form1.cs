@@ -8,6 +8,11 @@ namespace AdventurerWIN
 {
     public partial class Form1 : Form
     {
+        private string FormTitle = null;
+
+        private string Recorder = null;
+        private DateTime lastInput = DateTime.Now;
+
         public Form1()
         {
             InitializeComponent();
@@ -28,9 +33,8 @@ namespace AdventurerWIN
 
         private void Reset()
         {
-            tsTurnCounter.Visible = false;
             SetColours();
-            miLoadSaveGame.Enabled = false;
+            miSaveGame.Enabled = false;
             miOutputXML.Enabled = false;
             miOutputComment.Enabled = false;
         }
@@ -48,9 +52,11 @@ namespace AdventurerWIN
         private void LoadNewGame(string pGame)
         {
             Advent.LoadGame(pGame);
+
+            FormTitle += " " + Advent.GameName;
+
             SetColours();
-            tsFileName.Text = Advent.GameName;
-            miLoadSaveGame.Enabled = true;
+            miSaveGame.Enabled = true;
             txtMessages.DeselectAll();
             txtView.DeselectAll();
             txtInput.Focus();
@@ -117,12 +123,6 @@ namespace AdventurerWIN
             }
         }
 
-        private void miDisplayTurnCounter_Click(object sender, EventArgs e)
-        {
-            var d = sender as ToolStripMenuItem;
-            tsTurnCounter.Visible = d.Checked;
-        }
-
         private void MiAbout_Click(object sender, EventArgs e)
         {
             using (About a = new About())
@@ -186,6 +186,40 @@ namespace AdventurerWIN
             }
         }
 
+        private void fontToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (FontDialog fd = new FontDialog())
+            {
+                if (fd.ShowDialog() == DialogResult.OK)
+                {
+                    txtInput.Font = fd.Font;
+                    txtMessages.Font = fd.Font;
+                    txtView.Font = fd.Font;
+                    AutoSizeInput();
+                }
+            }
+        }
+
+        private void recordGameToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var r = sender as ToolStripMenuItem;
+
+            if (r.Checked)
+            {
+                using (SaveFileDialog sfd = new SaveFileDialog())
+                {
+                    sfd.Filter = "rec files (*.rec)|*.rec";
+                    if (sfd.ShowDialog() == DialogResult.OK)
+                    {
+                        Recorder = sfd.FileName;
+                        lastInput = DateTime.Now;
+                    }
+                    else
+                        Recorder = null;
+                }
+            }
+        }
+
         #endregion
 
         private void txtInput_KeyDown(object sender, KeyEventArgs e)
@@ -195,8 +229,21 @@ namespace AdventurerWIN
                 var t = sender as TextBox;
 
                 Advent.ProcessText(t.Text);
+                
+
+                if (miDisplayTurnCounter.Checked)
+                    this.Text = this.FormTitle + $" Turns: {Advent.TurnCounter}";
+                else
+                    this.Text = this.FormTitle;          
+                
+                if (Recorder != null)
+                {
+                    DateTime n = DateTime.Now;
+                    File.AppendAllText(Recorder, $"{(int)(n - lastInput).TotalMilliseconds}  \"{t.Text}\"{Environment.NewLine}");
+                    lastInput = n;
+                }
+
                 t.Text = "";
-                tsTurnCounter.Text = $"Turns: {Advent.TurnCounter}";
             }
         }
 
@@ -215,6 +262,26 @@ namespace AdventurerWIN
             txtInput.Focus();
         }
 
+        /// <summary>
+        /// Set the text box height,based on the font
+        /// </summary>
+        /// <param name="txt"></param>
+        private void AutoSizeInput()
+        {
+            const int x_margin = 0;
+            const int y_margin = 2;
+            Size size = TextRenderer.MeasureText(txtInput.Text, txtInput.Font);
+            txtInput.ClientSize =
+                new Size(size.Width + x_margin, size.Height + y_margin);
 
+            
+
+            
+        }
+
+        private void Form1_FormClosed(object sender, FormClosedEventArgs e)
+        {
+
+        }
     }
 }

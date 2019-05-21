@@ -12,6 +12,7 @@
         public static void LoadGame(string pFile)
         {
             _GameData = GameData.Load(pFile);
+            _rnd = new System.Random(_GameData.Seed);
             SearchActions(0, 0);
         }
 
@@ -23,6 +24,7 @@
         public static void RestoreGame(string pAdvGame, string pSnapShot)
         {
             _GameData = GameData.LoadSnapShot(pAdvGame, pSnapShot);
+            _rnd = new System.Random(_GameData.Seed);
             PerformActionEffect(64, 0, 0);//look
         }
 
