@@ -20,7 +20,7 @@ namespace GameEngine
         /// </remarks>
         public static void ProcessText(string pInput)
         {
-            _GameData.TurnCounter++;
+            GameData.TurnCounter++;
             SendGameMessages("", true);
 
             pInput = pInput.Trim();
@@ -41,13 +41,13 @@ namespace GameEngine
             if (V != null)
             { 
                 if (CompareString(V, "i"))
-                    V = _GameData.Verbs.First(v => v.StartsWith("INV"));
+                    V = GameData.Verbs.First(v => v.StartsWith("INV"));
 
-                if ((iV = SearchWordList(_GameData.Verbs, V)) != null)
+                if ((iV = SearchWordList(GameData.Verbs, V)) != null)
                 {
                     //a verb has been identified
                     if (N != null) 
-                        iN = SearchWordList(_GameData.Nouns, N);
+                        iN = SearchWordList(GameData.Nouns, N);
                 }
                 else//see if a direction has been entered
                 {
@@ -66,7 +66,7 @@ namespace GameEngine
             if (iV == null && V == null)
             {
                 SendGameMessages(_Sysmessages[11], true); //what
-                _GameData.PlayerNoun = "";
+                GameData.PlayerNoun = "";
             }
             else if ( iV == null && V != null)//first word present but not recognised
             {
@@ -81,11 +81,11 @@ namespace GameEngine
             else if (iV == (int)_Constants.VERB_GO && iN > -1 && iN < 7)    //player is moving
             {
 
-                if (_GameData.Rooms[_GameData.CurrentRoom].Exits[(int)iN - 1] > 0)
+                if (GameData.Rooms[GameData.CurrentRoom].Exits[(int)iN - 1] > 0)
                 {
                     //direction being moved in exists
                     //note the subtratcion - north is always 1, remove 1
-                    PerformActionEffect(54, _GameData.Rooms[_GameData.CurrentRoom].Exits[(int)iN - 1], 0);
+                    PerformActionEffect(54, GameData.Rooms[GameData.CurrentRoom].Exits[(int)iN - 1], 0);
 
                     SendGameMessages(
                         IsDark()
@@ -111,8 +111,8 @@ namespace GameEngine
 
 
             //Check lamp life, provide the lightsource in the the game and lit
-            if (CheckCondition(13, (int)_Constants.LIGHTSOURCE) & _GameData.LampLife > 0)
-                _GameData.LampLife--;
+            if (CheckCondition(13, (int)_Constants.LIGHTSOURCE) & GameData.LampLife > 0)
+                GameData.LampLife--;
 
 
 
@@ -127,8 +127,8 @@ namespace GameEngine
         /// <returns>Shrunk word</returns>
         static string ShrinkWord(string pWord)
         {
-            return (pWord.Length > _GameData.Header.WordLength
-                   ? pWord.Substring(0, _GameData.Header.WordLength)
+            return (pWord.Length > GameData.Header.WordLength
+                   ? pWord.Substring(0, GameData.Header.WordLength)
                    : pWord)
                    .ToUpper();
         }
@@ -140,7 +140,7 @@ namespace GameEngine
         /// <returns></returns>
         static bool IsDark()
         {
-            return (_GameData.BitFlags[(int)_Constants.DARKNESSFLAG] && CheckCondition(12, (int)_Constants.LIGHTSOURCE));
+            return (GameData.BitFlags[(int)_Constants.DARKNESSFLAG] && CheckCondition(12, (int)_Constants.LIGHTSOURCE));
         }
 
         /// <summary>
@@ -154,7 +154,7 @@ namespace GameEngine
             int retVal = -1;
             for (int d = 1; d < 7; d++)
             {
-                if (_GameData.Nouns[d].StartsWith(pDir))
+                if (GameData.Nouns[d].StartsWith(pDir))
                 {
                     retVal = d;
                     break;
@@ -197,7 +197,7 @@ namespace GameEngine
             var parentOutcome = false;
 
             List<GameData.Action> candidates =
-                        _GameData.Actions.Where(a =>
+                        GameData.Actions.Where(a =>
                             ((pVerb == 0 && a.Verb == pVerb)
                                 & (
                                     (pNoun == 0 && (a.Noun == pNoun || a.Noun == 100)   //0 or 100 actions occur automatically
@@ -220,7 +220,7 @@ namespace GameEngine
                 }
 
                 //do more stuff
-                if (_GameData.EndGame)
+                if (GameData.EndGame)
                 {
                     PerformActionEffect(64, 0, 0); //look
                     return;
@@ -236,7 +236,7 @@ namespace GameEngine
             }
 
             //output a can't do that message if we recognise a player verb in the list, but not a noun
-            if (pVerb > 0 && !parentOutcome & _GameData.Actions.Count(act => act.Verb == pVerb) > 0)
+            if (pVerb > 0 && !parentOutcome & GameData.Actions.Count(act => act.Verb == pVerb) > 0)
                 msg = 2;
 
             if (pVerb > 0)
@@ -256,15 +256,15 @@ namespace GameEngine
             if (CheckCondition(13, (int)_Constants.LIGHTSOURCE))
             {
 
-                if (_GameData.LampLife == 0)
+                if (GameData.LampLife == 0)
                 {
-                    _GameData.ChangeBitFlag((int)_Constants.LIGHOUTFLAG, true);
+                    GameData.ChangeBitFlag((int)_Constants.LIGHOUTFLAG, true);
                     SendGameMessages(_Sysmessages[19], false);
-                    _GameData.LampLife = 0;
+                    GameData.LampLife = 0;
                 }
-                else if (_GameData.LampLife > 0 && _GameData.LampLife < 25 &&
+                else if (GameData.LampLife > 0 && GameData.LampLife < 25 &&
                   CheckCondition(3, (int)_Constants.LIGHTSOURCE) &&
-                  _GameData.LampLife % 5 == 0)
+                  GameData.LampLife % 5 == 0)
                     SendGameMessages(_Sysmessages[20], false); //light growing dim
             }
 
@@ -298,11 +298,11 @@ namespace GameEngine
             switch (pCon)
             {
                 case 1: //item carried
-                    retVal = _InventoryLocations.Contains(_GameData.Items[pArg].Location);
+                    retVal = _InventoryLocations.Contains(GameData.Items[pArg].Location);
                     break;
 
                 case 2: //item in room with player
-                    retVal = _GameData.Items[pArg].Location == _GameData.CurrentRoom;
+                    retVal = GameData.Items[pArg].Location == GameData.CurrentRoom;
                     break;
 
                 case 3: //item carried or in room with player
@@ -310,65 +310,65 @@ namespace GameEngine
                     break;
 
                 case 4: //player in room X
-                    retVal = _GameData.CurrentRoom == pArg;
+                    retVal = GameData.CurrentRoom == pArg;
                     break;
 
                 case 5: //item not in room with player
-                    retVal = _GameData.Items[pArg].Location != _GameData.CurrentRoom;
+                    retVal = GameData.Items[pArg].Location != GameData.CurrentRoom;
                     break;
 
                 case 6: //item not carried
-                    retVal = !_InventoryLocations.Contains(_GameData.Items[pArg].Location);
+                    retVal = !_InventoryLocations.Contains(GameData.Items[pArg].Location);
                     break;
 
                 case 7: //player not it room
-                    retVal = _GameData.CurrentRoom != pArg;
+                    retVal = GameData.CurrentRoom != pArg;
                     break;
 
                 case 8: //bitflag X is set
-                    retVal = _GameData.BitFlags[pArg] == true;
+                    retVal = GameData.BitFlags[pArg] == true;
                     break;
 
                 case 9: //bitflag X is false
-                    retVal = _GameData.BitFlags[pArg] != true;
+                    retVal = GameData.BitFlags[pArg] != true;
                     break;
 
                 case 10: //something carried
-                    return _GameData.Items.Count(i => _InventoryLocations.Contains(i.Location) == true) > 0;
+                    return GameData.Items.Count(i => _InventoryLocations.Contains(i.Location) == true) > 0;
 
                 case 11: //nothing carried
-                    return _GameData.Items.Count(i => _InventoryLocations.Contains(i.Location) == true) == 0;
+                    return GameData.Items.Count(i => _InventoryLocations.Contains(i.Location) == true) == 0;
 
                 case 12: //item not carried or in room with player
                     retVal = CheckCondition(6, pArg) & CheckCondition(5, pArg);
                     break;
 
                 case 13: //item in game
-                    retVal = (_GameData.Items[pArg].Location != (int)_Constants.STORE);
+                    retVal = (GameData.Items[pArg].Location != (int)_Constants.STORE);
                     break;
 
                 case 14: //item not in game
-                    retVal = _GameData.Items[pArg].Location == (int)_Constants.STORE;
+                    retVal = GameData.Items[pArg].Location == (int)_Constants.STORE;
                     break;
 
                 case 15: //current counter less than arg
-                    retVal = _GameData.CurrentCounter <= pArg;
+                    retVal = GameData.CurrentCounter <= pArg;
                     break;
 
                 case 16: //current counter greater than arg
-                    retVal = _GameData.CurrentCounter > pArg;
+                    retVal = GameData.CurrentCounter > pArg;
                     break;
 
                 case 17: //object in initial location
-                    retVal = _GameData.Items[pArg].Moved() == false;
+                    retVal = GameData.Items[pArg].Moved() == false;
                     break;
 
                 case 18: //object not in initial location
-                    retVal = _GameData.Items[pArg].Moved() == true;
+                    retVal = GameData.Items[pArg].Moved() == true;
                     break;
 
                 case 19: //current counter equals
-                    retVal = _GameData.CurrentCounter == pArg;
+                    retVal = GameData.CurrentCounter == pArg;
                     break;
             }
 
@@ -429,7 +429,7 @@ namespace GameEngine
 
             if (pEffectID < 52 || pEffectID > 101)
             {
-                SendGameMessages(_GameData.Messages[pEffectID - (pEffectID > 101 ? 50 : 0)], false);
+                SendGameMessages(GameData.Messages[pEffectID - (pEffectID > 101 ? 50 : 0)], false);
                 PerformActionEffect(86, 0, 0);//carriage return
             }
             else
@@ -438,59 +438,59 @@ namespace GameEngine
                 {
 
                     case 52: //get item, check if can carry
-                        _GameData.TakeSuccessful = false;
-                        if (GetItemsAt(_InventoryLocations).Count() < _GameData.Header.MaxCarry)
+                        GameData.TakeSuccessful = false;
+                        if (GetItemsAt(_InventoryLocations).Count() < GameData.Header.MaxCarry)
                         {
-                            _GameData.Items[pArg1].Location = (int)_Constants.INVENTORY;
-                            _GameData.TakeSuccessful = true;
+                            GameData.Items[pArg1].Location = (int)_Constants.INVENTORY;
+                            GameData.TakeSuccessful = true;
                         }
                         else
                             SendGameMessages(_Sysmessages[8], true);
                         break;
 
                     case 53: //drops item into current room
-                        _GameData.ChangeItemLocation(pArg1, _GameData.CurrentRoom);
+                        GameData.ChangeItemLocation(pArg1, GameData.CurrentRoom);
                         break;
 
                     case 54: //move room
-                        _GameData.CurrentRoom = pArg1;
+                        GameData.CurrentRoom = pArg1;
                         PerformActionEffect(64, 0, 0);
                         break;
 
                     case 55: //Item <arg> is removed from the game (put in room 0)
                     case 59:
-                        _GameData.ChangeItemLocation(pArg1, (int)_Constants.STORE);
+                        GameData.ChangeItemLocation(pArg1, (int)_Constants.STORE);
                         break;
 
                     case 56: //set darkness flag
-                        _GameData.ChangeBitFlag((int)_Constants.DARKNESSFLAG, true);
+                        GameData.ChangeBitFlag((int)_Constants.DARKNESSFLAG, true);
                         break;
 
                     case 57: //clear darkness flag
-                        _GameData.ChangeBitFlag((int)_Constants.DARKNESSFLAG, false);
+                        GameData.ChangeBitFlag((int)_Constants.DARKNESSFLAG, false);
                         break;
 
                     case 58: //set pArg1 flag
-                        _GameData.ChangeBitFlag(pArg1, true);
+                        GameData.ChangeBitFlag(pArg1, true);
                         break;
 
                     case 60: //set pArg1 flag
-                        _GameData.ChangeBitFlag(pArg1, false);
+                        GameData.ChangeBitFlag(pArg1, false);
                         break;
 
                     case 61: //Death, clear dark flag, move to last room NOT GAME OVER, move to limbo room
                         PerformActionEffect(57, 0, 0);
-                        _GameData.CurrentRoom = _GameData.Rooms.Count() - 1;
+                        GameData.CurrentRoom = GameData.Rooms.Count() - 1;
                         SendGameMessages(_Sysmessages[24], false);
                         SendGameOver();
                         break;
 
                     case 62: //item is moved to room
-                        _GameData.ChangeItemLocation(pArg1, pArg2);
+                        GameData.ChangeItemLocation(pArg1, pArg2);
                         break;
 
                     case 63: //game over
-                        _GameData.EndGame = true;
+                        GameData.EndGame = true;
                         SendGameMessages(_Sysmessages[25], false);
                         SendGameOver();
                         break;
@@ -498,19 +498,19 @@ namespace GameEngine
                     case 64: //look
                     case 76:
 
-                        if (_GameData.BitFlags[(int)_Constants.DARKNESSFLAG] && CheckCondition(12, (int)_Constants.LIGHTSOURCE))
+                        if (GameData.BitFlags[(int)_Constants.DARKNESSFLAG] && CheckCondition(12, (int)_Constants.LIGHTSOURCE))
                             _RoomView = _Sysmessages[16];
                         else
                         {
 
-                            string roomitems = String.Join(", ", _GameData.Items.Where(i => i.Location == _GameData.CurrentRoom)
+                            string roomitems = String.Join(", ", GameData.Items.Where(i => i.Location == GameData.CurrentRoom)
                                                 .Select(i => i.Description)
                                                 .ToArray()
                                                 );
 
                             _RoomItems = roomitems == "" ? "" : _Sysmessages[4] + roomitems;
 
-                            string desc = _GameData.Rooms[_GameData.CurrentRoom].Description;
+                            string desc = GameData.Rooms[GameData.CurrentRoom].Description;
 
                             _RoomView =
                                 (
@@ -527,15 +527,15 @@ namespace GameEngine
                         break;
 
                     case 65: //score
-                        int storedItems = _GameData.Items.Count(i => i.Location == _GameData.Header.TreasureRoom
+                        int storedItems = GameData.Items.Count(i => i.Location == GameData.Header.TreasureRoom
                                 && i.Description.StartsWith("*"));
 
                         SendGameMessages(string.Format(
                                             _Sysmessages[13]
                                             , storedItems
-                                            , Math.Floor((storedItems * 1.0 / _GameData.Header.TotalTreasures) * 100)), false);
+                                            , Math.Floor((storedItems * 1.0 / GameData.Header.TotalTreasures) * 100)), false);
 
-                        if (storedItems == _GameData.Header.TotalTreasures)
+                        if (storedItems == GameData.Header.TotalTreasures)
                         {
                             SendGameMessages(_Sysmessages[26], true);
                             PerformActionEffect(63, 0, 0);
@@ -560,17 +560,17 @@ namespace GameEngine
                         break;
 
                     case 67:
-                        _GameData.ChangeBitFlag(0, true);
+                        GameData.ChangeBitFlag(0, true);
                         break;
 
                     case 68:
-                        _GameData.ChangeBitFlag(0, false);
+                        GameData.ChangeBitFlag(0, false);
                         break;
 
                     case 69: //refill lamp
-                        _GameData.LampLife = _GameData.Header.LightDuration;
-                        _GameData.ChangeBitFlag((int)_Constants.LIGHOUTFLAG, false);
-                        _GameData.ChangeItemLocation((int)_Constants.LIGHTSOURCE, (int)_Constants.INVENTORY);
+                        GameData.LampLife = GameData.Header.LightDuration;
+                        GameData.ChangeBitFlag((int)_Constants.LIGHOUTFLAG, false);
+                        GameData.ChangeItemLocation((int)_Constants.LIGHTSOURCE, (int)_Constants.INVENTORY);
                         break;
 
                     case 70: //clear screen
@@ -583,63 +583,63 @@ namespace GameEngine
                         break;
 
                     case 72: // swap item locations
-                        int loc = _GameData.Items[pArg1].Location;
-                        _GameData.ChangeItemLocation(pArg1, _GameData.Items[pArg2].Location);
-                        _GameData.ChangeItemLocation(pArg2, loc);
+                        int loc = GameData.Items[pArg1].Location;
+                        GameData.ChangeItemLocation(pArg1, GameData.Items[pArg2].Location);
+                        GameData.ChangeItemLocation(pArg2, loc);
                         break;
 
                     case 73: //continue with next action
                         break;
 
                     case 74: //take item, no check done to see if can carry
-                        _GameData.ChangeItemLocation(pArg1, (int)_Constants.INVENTORY);
+                        GameData.ChangeItemLocation(pArg1, (int)_Constants.INVENTORY);
                         break;
 
                     case 75: //put item 1 with item2
-                        _GameData.ChangeItemLocation(pArg1, _GameData.Items[pArg2].Location);
+                        GameData.ChangeItemLocation(pArg1, GameData.Items[pArg2].Location);
                         break;
 
                     case 77: //decement current counter
-                        if (_GameData.CurrentCounter > 0)
-                            _GameData.CurrentCounter--;
+                        if (GameData.CurrentCounter > 0)
+                            GameData.CurrentCounter--;
                         break;
 
                     case 78: //output current counter
-                        SendGameMessages(_GameData.CurrentCounter + Environment.NewLine, false);
+                        SendGameMessages(GameData.CurrentCounter + Environment.NewLine, false);
                         break;
 
                     case 79: //set current counter value
-                        _GameData.CurrentCounter = pArg1;
+                        GameData.CurrentCounter = pArg1;
                         break;
 
                     case 80: //swap location with saved location
-                        int j = _GameData.CurrentRoom;
-                        _GameData.CurrentRoom = _GameData.SavedRoom;
-                        _GameData.SavedRoom = j;
+                        int j = GameData.CurrentRoom;
+                        GameData.CurrentRoom = GameData.SavedRoom;
+                        GameData.SavedRoom = j;
                         break;
 
                     case 81: //"Select a counter. Current counter is swapped with backup counter @".replace("@", pValue1);
-                        int temp = _GameData.CurrentCounter;
-                        _GameData.CurrentCounter = _GameData.Counters[pArg1];
-                        _GameData.ChangeCounter(pArg1, temp);
+                        int temp = GameData.CurrentCounter;
+                        GameData.CurrentCounter = GameData.Counters[pArg1];
+                        GameData.ChangeCounter(pArg1, temp);
                         break;
 
                     case 82: //add to current counter
-                        _GameData.CurrentCounter += pArg1;
+                        GameData.CurrentCounter += pArg1;
                         break;
 
                     case 83: //subtract from current counter
-                        _GameData.CurrentCounter -= pArg1;
-                        if (_GameData.CurrentCounter < -1)
-                            _GameData.CurrentCounter = -1;
+                        GameData.CurrentCounter -= pArg1;
+                        if (GameData.CurrentCounter < -1)
+                            GameData.CurrentCounter = -1;
                         break;
 
                     case 84: //echo noun without cr
-                        SendGameMessages(_GameData.PlayerNoun, false);
+                        SendGameMessages(GameData.PlayerNoun, false);
                         break;
 
                     case 85: //echo noun
-                        SendGameMessages(_GameData.PlayerNoun + Environment.NewLine, false);
+                        SendGameMessages(GameData.PlayerNoun + Environment.NewLine, false);
                         break;
 
                     case 86: //Carriage Return"
@@ -647,9 +647,9 @@ namespace GameEngine
                         break;
 
                     case 87: //Swap current location value with backup location-swap value
-                        int temp1 = _GameData.CurrentRoom;
-                        _GameData.CurrentRoom = _GameData.SavedRooms[pArg1];
-                        _GameData.SavedRooms[pArg1] = temp1;
+                        int temp1 = GameData.CurrentRoom;
+                        GameData.CurrentRoom = GameData.SavedRooms[pArg1];
+                        GameData.SavedRooms[pArg1] = temp1;
                         break;
 
                     case 88: //wait 2 seconds
@@ -681,7 +681,7 @@ namespace GameEngine
         /// <returns>Array of items</returns>
         private static GameData.Item[] GetItemsAt(int pLocation)
         {
-            return _GameData.Items.Where(i => i.Location == pLocation).ToArray();
+            return GameData.Items.Where(i => i.Location == pLocation).ToArray();
         }
 
         /// <summary>
@@ -691,7 +691,7 @@ namespace GameEngine
         /// <returns>Array of items</returns>
         private static GameData.Item[] GetItemsAt(int[] pLocation)
         {
-            return _GameData.Items.Where(i => pLocation.Contains(i.Location)).ToArray();
+            return GameData.Items.Where(i => pLocation.Contains(i.Location)).ToArray();
         }
     }
 }

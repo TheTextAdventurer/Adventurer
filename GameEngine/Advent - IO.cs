@@ -11,8 +11,8 @@
         /// <param name="pFile">Game file</param>
         public static void LoadGame(string pFile)
         {
-            _GameData = GameData.Load(pFile);
-            _rnd = new System.Random(_GameData.Seed);
+            GameData = GameData.Load(pFile);
+            _rnd = new System.Random(GameData.Seed);
             SearchActions(0, 0);
         }
 
@@ -23,8 +23,8 @@
         /// <param name="pSnapShot">save game data</param>
         public static void RestoreGame(string pAdvGame, string pSnapShot)
         {
-            _GameData = GameData.LoadSnapShot(pAdvGame, pSnapShot);
-            _rnd = new System.Random(_GameData.Seed);
+            GameData = GameData.LoadSnapShot(pAdvGame, pSnapShot);
+            _rnd = new System.Random(GameData.Seed);
             PerformActionEffect(64, 0, 0);//look
         }
 
@@ -33,7 +33,7 @@
         /// </summary>
         public static void SaveGame()
         {
-            SendGameMessages(string.Format("Game saved: {0}", _GameData.SaveSnapshot()), true);
+            SendGameMessages(string.Format("Game saved: {0}", GameData.SaveSnapshot()), true);
             PerformActionEffect(86, 0, 0);   //carriage return
         }
 

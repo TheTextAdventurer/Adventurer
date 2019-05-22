@@ -20,11 +20,11 @@ namespace GameEngine
         static string _RoomView = null;
         static string _RoomItems = null;
 
-        static GameData _GameData = null;
+        public static GameData GameData { get; private set; } = null;
 
-        static public string GameName => _GameData.GameName;
-        static public bool ISGameOver => _GameData.EndGame;
-        static public int TurnCounter => _GameData.TurnCounter;
+        static public string GameName => GameData.GameName;
+        static public bool ISGameOver => GameData.EndGame;
+        static public int TurnCounter => GameData.TurnCounter;
 
     }
 }

@@ -8,6 +8,7 @@ namespace GameEngine
     /// <summary>
     /// Contains methods for outputting a DAT file (in the ScottFree format)
     /// </summary>
+    
     public partial class GameData
     {
 
