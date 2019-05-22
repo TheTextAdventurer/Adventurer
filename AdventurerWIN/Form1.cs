@@ -37,12 +37,12 @@ namespace AdventurerWIN
         {
             MessageBox.Show("This game is now over", "Game over", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
         }
-
-        private Color ForeGroundColour { get; set; } = SystemColors.WindowText;
-        private Color BackgroundColour { get; set; } = SystemColors.Window;
+ 
 
         private void Reset()
         {
+            
+
             SetColours();
             miSaveGame.Enabled = false;
             miOutputXML.Enabled = false;
@@ -51,12 +51,12 @@ namespace AdventurerWIN
 
         private void SetColours()
         {
-            txtInput.BackColor = BackgroundColour;
-            txtInput.ForeColor = ForeGroundColour;
-            txtMessages.BackColor = BackgroundColour;
-            txtMessages.ForeColor = ForeGroundColour;
-            txtView.BackColor = BackgroundColour;
-            txtView.ForeColor = ForeGroundColour;
+            txtInput.BackColor = Properties.Settings.Default.BackGroundColour;
+            txtInput.ForeColor = Properties.Settings.Default.ForeGroundColour; ;
+            txtMessages.BackColor = Properties.Settings.Default.BackGroundColour;
+            txtMessages.ForeColor = Properties.Settings.Default.ForeGroundColour; ;
+            txtView.BackColor = Properties.Settings.Default.BackGroundColour;
+            txtView.ForeColor = Properties.Settings.Default.ForeGroundColour;
         }
 
         private void LoadNewGame(string pGame)
@@ -147,7 +147,8 @@ namespace AdventurerWIN
             {
                 if (cfd.ShowDialog() == DialogResult.OK)
                 {
-                    ForeGroundColour = cfd.Color;
+                    Properties.Settings.Default.ForeGroundColour = cfd.Color;
+                    Properties.Settings.Default.Save();
                     SetColours();
                 }
             }
@@ -159,7 +160,8 @@ namespace AdventurerWIN
             {
                 if (cfd.ShowDialog() == DialogResult.OK)
                 {
-                    BackgroundColour = cfd.Color;
+                    Properties.Settings.Default.BackGroundColour = cfd.Color;
+                    Properties.Settings.Default.Save();
                     SetColours();
                 }
             }
@@ -201,9 +203,11 @@ namespace AdventurerWIN
             {
                 if (fd.ShowDialog() == DialogResult.OK)
                 {
-                    txtInput.Font = fd.Font;
-                    txtMessages.Font = fd.Font;
-                    txtView.Font = fd.Font;
+
+                    txtInput.Font = txtMessages.Font = txtView.Font =  Properties.Settings.Default.TextFont = fd.Font;
+
+                    Properties.Settings.Default.Save();
+
                     AutoSizeInput();
                 }
             }
@@ -377,169 +381,174 @@ namespace AdventurerWIN
             if (Recorder != null)
             {
                 txtInput.Text = Recorder.GetNextInput();
+                Console.WriteLine(txtInput.Text);
                 Recorder_eCarriageReturn(null, null);
             }
         }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Properties.Settings.Default.FormSize = this.Size;
+            Properties.Settings.Default.Save();
+        }
     }
     /*
-     500	,	go east
     500	,	go east
-    500	,	take axe
-    500	,	go north
-    500	,	take ox
-    500	,	say bunyon
-    500	,	swim
-    500	,	go south
-    500	,	go hole
-    500	,	take flint
-    500	,	go up
-    500	,	go west
-    500	,	go west
-    500	,	take axe
-    500	,	take ox
-    500	,	take fruit
-    500	,	go east
-    500	,	take chiggers
-    500	,	climb tree
-    500	,	drop chiggers
-    500	,	take keys
-    500	,	read web
-    500	,	climb down
-    500	,	chop tree
-    500	,	drop axe
-    500	,	take mud
-    500	,	go stump
-    500	,	drop mud
-    500	,	drop ox
-    500	,	drop fruit
-    500	,	go down
-    500	,	take rubies
-    500	,	go up
-    500	,	drop rubies
-    500, score
-    500	,	take lamp
-    500	,	rub lamp
-    500	,	rub lamp
-    500	,	score
-    500	,	go down
-    500	,	go hole
-    500	,	open door
-    500	,	drop keys
-    500	,	light lamp
-    500	,	go hall
-    500	,	go down
-    500	,	go south
-    500	,	take bladder
-    500	,	go north
-    500	,	go up
-    500	,	go up
-    500	,	go up
-    500	,	unlight lamp
-    500	,	go up
-    500	,	go up
-    500	,	take gas
-    1000, inv
-    500	,	go stump
-    500	,	go down
-
-    500	,	light lamp
-    500	,	go hole
-    500	,	go hall
-    500	,	go down
-    500	,	go south
-    500	,	go up
-    500	,	drop bladder
-    500	,	ignite gas
-    500	,	go hole
-    500	,	jump
-    500	,	take mirror
-    500	,	scream bear
-    500	,	take mirror
-    500	,	go throne
-    500	,	take crown
-    500	,	go west
-    500	,	jump
-    500	,	go west
-    500	,	take bricks
-    500	,	go down
-    500	,	go north
-    500	,	go up
-    500	,	go up
-    500	,	go up
-    500	,	unlight lamp
-    500	,	go up
-    500	,	drop crown
-    500, score
-    500	,	take bottle
-    500	,	go down
-    500	,	light lamp
-    500	,	drop flint
-    500	,	go hole
-    500	,	go hall
-    500	,	go down
-    500	,	go down
-    500	,	go down
-    500	,	go west
-    500	,	go down
-    500	,	take rug
-    500	,	go down
-    500	,	build dam
-    500	,	drop bricks
-    500	,	look lava
-    500	,	pour water
-    500	,	take firestone
-    500	,	take net
-    500	,	say away
-    500	,	say away
-    500	,	unlight lamp
-    500	,	go south
-    500	,	go stump
-    500	,	drop rug
-    500	,	drop mirror
-    500	,	drop firestone
-    500, score
-    500	,	go up
-    500	,	go east
-    500	,	go north
-    500	,	take water
-    500	,	take fish
-    500	,	go south
-    500	,	go west
-    500	,	go stump
-    500	,	drop fish
-    500	,	drop net
-    500,score
-    500	,	take mud
-    500	,	go down
-    500	,	take flint
-    500	,	go hole
-    500	,	light lamp
-    500	,	drop flint
-    500	,	go hole
-    500	,	go hall
-    500	,	go down
-    500	,	go north
-    500	,	save game
-    500	,	go north
-    500	,	take honey
-    500	,	pour water
-    500	,	take bees
-    500	,	go south
-    500	,	go south
-    500	,	go up
-    500	,	go up
-    500	,	unlight lamp
-    500	,	go up
-    500	,	drop mud
-    500	,	go up
-    500	,	go north
-    500	,	drop bees
-    500	,	take eggs
-    500	,	go south
-    500	,	go stump
-    500	,	drop eggs
-    500	,	drop honey
-    500	,	Score
+500	,	go east
+500	,	take axe
+500	,	go north
+500	,	take ox
+500	,	say bunyon
+500	,	swim
+500	,	go south
+500	,	go hole
+500	,	take flint
+500	,	go up
+500	,	go west
+500	,	go west
+500	,	take axe
+500	,	take ox
+500	,	take fruit
+500	,	go east
+500	,	take chiggers
+500	,	climb tree
+500	,	drop chiggers
+500	,	take keys
+500	,	read web
+500	,	climb down
+500	,	chop tree
+500	,	drop axe
+500	,	take mud
+500	,	go stump
+500	,	drop mud
+500	,	drop ox
+500	,	drop fruit
+500	,	go down
+500	,	take rubies
+500	,	go up
+500	,	drop rubies
+500	,	score
+500	,	take lamp
+500	,	rub lamp
+500	,	rub lamp
+500	,	score
+500	,	go down
+500	,	go hole
+500	,	open door
+500	,	drop keys
+500	,	light lamp
+500	,	go hall
+500	,	go down
+500	,	go south
+500	,	take bladder
+500	,	go north
+500	,	go up
+500	,	go up
+500	,	go up
+500	,	unlight lamp
+500	,	go up
+500	,	go up
+500	,	take gas
+1000	,	inv
+500	,	go stump
+500	,	go down
+500	,	light lamp
+500	,	go hole
+500	,	go hall
+500	,	go down
+500	,	go south
+500	,	go up
+500	,	drop bladder
+500	,	ignite gas
+500	,	go hole
+500	,	jump
+500	,	take mirror
+500	,	scream bear
+500	,	take mirror
+500	,	go throne
+500	,	take crown
+500	,	go west
+500	,	jump
+500	,	go west
+500	,	take bricks
+500	,	go down
+500	,	go north
+500	,	go up
+500	,	go up
+500	,	go up
+500	,	unlight lamp
+500	,	go up
+500	,	drop crown
+500	,	score
+500	,	take bottle
+500	,	go down
+500	,	light lamp
+500	,	drop flint
+500	,	go hole
+500	,	go hall
+500	,	go down
+500	,	go down
+500	,	go down
+500	,	go west
+500	,	go down
+500	,	take rug
+500	,	go down
+500	,	build dam
+500	,	drop bricks
+500	,	look lava
+500	,	pour water
+500	,	take firestone
+500	,	take net
+500	,	say away
+500	,	say away
+500	,	unlight lamp
+500	,	go south
+500	,	go stump
+500	,	drop rug
+500	,	drop mirror
+500	,	drop firestone
+500	,	score
+500	,	go up
+500	,	go east
+500	,	go north
+500	,	take water
+500	,	take fish
+500	,	go south
+500	,	go west
+500	,	go stump
+500	,	drop fish
+500	,	drop net
+500	,	score
+500	,	take mud
+500	,	go down
+500	,	take flint
+500	,	go hole
+500	,	light lamp
+500	,	drop flint
+500	,	go hall
+500	,	go down
+500	,	go north
+500	,	save game
+500	,	go north
+500	,	take honey
+500	,	pour water
+500	,	take bees
+500	,	go south
+500	,	go south
+500	,	go up
+500	,	go up
+500	,	unlight lamp
+500	,	go up
+500	,	drop mud
+500	,	go up
+500	,	go north
+500	,	drop bees
+500	,	take eggs
+500	,	go south
+500	,	go stump
+500	,	drop eggs
+500	,	drop honey
+500	,	Score
 
     */
 
