@@ -48,14 +48,17 @@
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.miOutputXML = new System.Windows.Forms.ToolStripMenuItem();
             this.miOutputComment = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
+            this.recordGameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.playRecordedGameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.stopRecordingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.MiAbout = new System.Windows.Forms.ToolStripMenuItem();
             this.txtInput = new System.Windows.Forms.TextBox();
             this.txtView = new System.Windows.Forms.TextBox();
             this.txtMessages = new System.Windows.Forms.TextBox();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
-            this.recordGameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.editRecordedGameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
@@ -94,53 +97,53 @@
             // 
             this.MiLoadGame.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.MiLoadGame.Name = "MiLoadGame";
-            this.MiLoadGame.Size = new System.Drawing.Size(180, 22);
+            this.MiLoadGame.Size = new System.Drawing.Size(161, 22);
             this.MiLoadGame.Text = "Load Game";
             this.MiLoadGame.Click += new System.EventHandler(this.MiLoadGame_Click);
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(158, 6);
             // 
             // miNew
             // 
             this.miNew.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.miNew.Name = "miNew";
-            this.miNew.Size = new System.Drawing.Size(180, 22);
+            this.miNew.Size = new System.Drawing.Size(161, 22);
             this.miNew.Text = "New";
             this.miNew.Click += new System.EventHandler(this.miNew_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(158, 6);
             // 
             // miLoadSaveGame
             // 
             this.miLoadSaveGame.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.miLoadSaveGame.Name = "miLoadSaveGame";
-            this.miLoadSaveGame.Size = new System.Drawing.Size(180, 22);
+            this.miLoadSaveGame.Size = new System.Drawing.Size(161, 22);
             this.miLoadSaveGame.Text = "Load Save Game";
             this.miLoadSaveGame.Click += new System.EventHandler(this.miLoadSaveGame_Click);
             // 
             // miSaveGame
             // 
             this.miSaveGame.Name = "miSaveGame";
-            this.miSaveGame.Size = new System.Drawing.Size(180, 22);
+            this.miSaveGame.Size = new System.Drawing.Size(161, 22);
             this.miSaveGame.Text = "Save Game";
             this.miSaveGame.Click += new System.EventHandler(this.miSaveGame_Click_1);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(158, 6);
             // 
             // miExit
             // 
             this.miExit.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.miExit.Name = "miExit";
-            this.miExit.Size = new System.Drawing.Size(180, 22);
+            this.miExit.Size = new System.Drawing.Size(161, 22);
             this.miExit.Text = "Exit";
             this.miExit.Click += new System.EventHandler(this.miExit_Click);
             // 
@@ -157,7 +160,10 @@
             this.miOutputXML,
             this.miOutputComment,
             this.toolStripSeparator6,
-            this.recordGameToolStripMenuItem});
+            this.recordGameToolStripMenuItem,
+            this.playRecordedGameToolStripMenuItem,
+            this.stopRecordingToolStripMenuItem,
+            this.editRecordedGameToolStripMenuItem});
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
             this.optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
             this.optionsToolStripMenuItem.Text = "Options";
@@ -213,6 +219,33 @@
             this.miOutputComment.Size = new System.Drawing.Size(214, 22);
             this.miOutputComment.Text = "Output as commented dat";
             this.miOutputComment.Click += new System.EventHandler(this.miOutputComment_Click);
+            // 
+            // toolStripSeparator6
+            // 
+            this.toolStripSeparator6.Name = "toolStripSeparator6";
+            this.toolStripSeparator6.Size = new System.Drawing.Size(211, 6);
+            // 
+            // recordGameToolStripMenuItem
+            // 
+            this.recordGameToolStripMenuItem.CheckOnClick = true;
+            this.recordGameToolStripMenuItem.Name = "recordGameToolStripMenuItem";
+            this.recordGameToolStripMenuItem.Size = new System.Drawing.Size(214, 22);
+            this.recordGameToolStripMenuItem.Text = "Record Game";
+            this.recordGameToolStripMenuItem.Click += new System.EventHandler(this.recordGameToolStripMenuItem_Click);
+            // 
+            // playRecordedGameToolStripMenuItem
+            // 
+            this.playRecordedGameToolStripMenuItem.Name = "playRecordedGameToolStripMenuItem";
+            this.playRecordedGameToolStripMenuItem.Size = new System.Drawing.Size(214, 22);
+            this.playRecordedGameToolStripMenuItem.Text = "Play recorded game";
+            this.playRecordedGameToolStripMenuItem.Click += new System.EventHandler(this.playRecordedGameToolStripMenuItem_Click);
+            // 
+            // stopRecordingToolStripMenuItem
+            // 
+            this.stopRecordingToolStripMenuItem.Name = "stopRecordingToolStripMenuItem";
+            this.stopRecordingToolStripMenuItem.Size = new System.Drawing.Size(214, 22);
+            this.stopRecordingToolStripMenuItem.Text = "Stop Recording";
+            this.stopRecordingToolStripMenuItem.Click += new System.EventHandler(this.stopRecordingToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -278,18 +311,12 @@
             this.tableLayoutPanel1.Size = new System.Drawing.Size(423, 307);
             this.tableLayoutPanel1.TabIndex = 5;
             // 
-            // toolStripSeparator6
+            // editRecordedGameToolStripMenuItem
             // 
-            this.toolStripSeparator6.Name = "toolStripSeparator6";
-            this.toolStripSeparator6.Size = new System.Drawing.Size(211, 6);
-            // 
-            // recordGameToolStripMenuItem
-            // 
-            this.recordGameToolStripMenuItem.CheckOnClick = true;
-            this.recordGameToolStripMenuItem.Name = "recordGameToolStripMenuItem";
-            this.recordGameToolStripMenuItem.Size = new System.Drawing.Size(214, 22);
-            this.recordGameToolStripMenuItem.Text = "Record Game";
-            this.recordGameToolStripMenuItem.Click += new System.EventHandler(this.recordGameToolStripMenuItem_Click);
+            this.editRecordedGameToolStripMenuItem.Name = "editRecordedGameToolStripMenuItem";
+            this.editRecordedGameToolStripMenuItem.Size = new System.Drawing.Size(214, 22);
+            this.editRecordedGameToolStripMenuItem.Text = "Edit Recorded Game";
+            this.editRecordedGameToolStripMenuItem.Click += new System.EventHandler(this.editRecordedGameToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -300,13 +327,10 @@
             this.Controls.Add(this.menuStrip1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(439, 370);
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "AdventurerWIN";
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
             this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Form1_KeyPress);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -346,6 +370,9 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
         private System.Windows.Forms.ToolStripMenuItem recordGameToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem playRecordedGameToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem stopRecordingToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem editRecordedGameToolStripMenuItem;
     }
 }
 

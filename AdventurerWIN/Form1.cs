@@ -1,17 +1,19 @@
 ﻿using System;
 using System.Drawing;
 using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows.Forms;
 using GameEngine;
 
 namespace AdventurerWIN
 {
+
     public partial class Form1 : Form
     {
         private string FormTitle = null;
 
-        private string Recorder = null;
-        private DateTime lastInput = DateTime.Now;
+        private RecordGame Recorder = null;
+
 
         public Form1()
         {
@@ -20,8 +22,16 @@ namespace AdventurerWIN
             Advent.RoomView += Advent_RoomView;
             Advent.GameMessages += Advent_GameMessages;
             Advent.GameOver += Advent_GameOver;
+
             Reset();
+
+            LoadNewGame("Adv01.dat");
+            //BeginRecording("E:\\temp\\Adventurer\\AdventurerWIN\\bin\\Debug\\foo.rec");
+            //BeginPlayback("E:\\temp\\Adventurer\\AdventurerWIN\\bin\\Debug\\test.rec");
         }
+
+
+
 
         private void Advent_GameOver(object sender, EventArgs e)
         {
@@ -82,7 +92,6 @@ namespace AdventurerWIN
         }
 
         #endregion
-
 
         #region menu item clicks
 
@@ -211,16 +220,49 @@ namespace AdventurerWIN
                     sfd.Filter = "rec files (*.rec)|*.rec";
                     if (sfd.ShowDialog() == DialogResult.OK)
                     {
-                        Recorder = sfd.FileName;
-                        lastInput = DateTime.Now;
+                        BeginRecording(sfd.FileName);
                     }
                     else
+                    {
                         Recorder = null;
+                        r.Checked = false;
+                    }
                 }
             }
         }
 
+
+        private void playRecordedGameToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog ofd = new OpenFileDialog())
+            {
+                ofd.Filter = "rec files (*.rec)|*.rec";
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    BeginPlayback(ofd.FileName);
+                }
+            }            
+        }
+
+        private void stopRecordingToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (Recorder != null)
+            {
+                RecordGame.Save(Recorder);
+            }
+        }
+
+        private void editRecordedGameToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (EditRecorded er = new EditRecorded())
+            {
+                er.ShowDialog();
+            }
+        }
+
         #endregion
+
+        #region textbox code
 
         private void txtInput_KeyDown(object sender, KeyEventArgs e)
         {
@@ -234,14 +276,10 @@ namespace AdventurerWIN
                 if (miDisplayTurnCounter.Checked)
                     this.Text = this.FormTitle + $" Turns: {Advent.TurnCounter}";
                 else
-                    this.Text = this.FormTitle;          
-                
-                if (Recorder != null)
-                {
-                    DateTime n = DateTime.Now;
-                    File.AppendAllText(Recorder, $"{(int)(n - lastInput).TotalMilliseconds}  \"{t.Text}\"{Environment.NewLine}");
-                    lastInput = n;
-                }
+                    this.Text = this.FormTitle;
+
+                if (Recorder != null && !Recorder.Playback)
+                    Recorder.AddInput(t.Text);
 
                 t.Text = "";
             }
@@ -263,7 +301,7 @@ namespace AdventurerWIN
         }
 
         /// <summary>
-        /// Set the text box height,based on the font
+        /// Set the text box height,based on the font size
         /// </summary>
         /// <param name="txt"></param>
         private void AutoSizeInput()
@@ -274,14 +312,60 @@ namespace AdventurerWIN
             txtInput.ClientSize =
                 new Size(size.Width + x_margin, size.Height + y_margin);
 
-            
-
-            
         }
 
-        private void Form1_FormClosed(object sender, FormClosedEventArgs e)
+
+
+
+        #endregion
+
+        #region recorder code
+
+        private void BeginRecording(string pPath)
         {
-
+            Recorder = new RecordGame(Advent.GameData, pPath);
         }
+
+
+        private void BeginPlayback(string pPath)
+        {
+            if (Recorder != null)
+            {
+                Recorder.eKeystroke -= Recorder_eKeystroke;
+                Recorder.ReplayFinished -= Recorder_ReplayFinished;
+            }
+
+            Recorder = RecordGame.Load(pPath);
+
+            Recorder.eKeystroke += Recorder_eKeystroke;
+            Recorder.ReplayFinished += Recorder_ReplayFinished;
+            Recorder.eCarriageReturn += Recorder_eCarriageReturn;
+            Advent.RestoreGame(Recorder.Data);
+            Recorder.StartReplay();
+        }
+
+        private void Recorder_eCarriageReturn(object sender, EventArgs e)
+        {
+            txtInput.Focus();
+            SendKeys.Send(Environment.NewLine);
+        }
+
+
+        private void Recorder_ReplayFinished(object sender, EventArgs e)
+        {
+            //throw new NotImplementedException();
+        }
+
+        private void Recorder_eKeystroke(object sender, RecordGame.Keystroke e)
+        {
+            txtInput.Focus();
+            txtInput.Text += e.Key;
+            txtInput.SelectionStart = txtInput.Text.Length;
+            txtInput.SelectionLength = 0;
+        }
+
+        #endregion
+
+
     }
 }

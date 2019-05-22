@@ -20,7 +20,7 @@ namespace GameEngine
         static string _RoomView = null;
         static string _RoomItems = null;
 
-        public static GameData GameData { get; private set; } = null;
+        public static GameData GameData { get; set; } = null;
 
         static public string GameName => GameData.GameName;
         static public bool ISGameOver => GameData.EndGame;

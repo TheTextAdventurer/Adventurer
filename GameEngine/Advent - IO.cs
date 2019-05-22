@@ -28,6 +28,13 @@
             PerformActionEffect(64, 0, 0);//look
         }
 
+        public static void RestoreGame(GameData pData)
+        {
+            GameData = pData;
+            _rnd = new System.Random(GameData.Seed);
+            PerformActionEffect(64, 0, 0);//look
+        }
+
         /// <summary>
         /// Save a game
         /// </summary>
