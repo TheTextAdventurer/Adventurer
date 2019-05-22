@@ -52,13 +52,13 @@
             this.recordGameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.playRecordedGameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.stopRecordingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.editRecordedGameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.MiAbout = new System.Windows.Forms.ToolStripMenuItem();
             this.txtInput = new System.Windows.Forms.TextBox();
             this.txtView = new System.Windows.Forms.TextBox();
             this.txtMessages = new System.Windows.Forms.TextBox();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.editRecordedGameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
@@ -97,53 +97,53 @@
             // 
             this.MiLoadGame.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.MiLoadGame.Name = "MiLoadGame";
-            this.MiLoadGame.Size = new System.Drawing.Size(161, 22);
+            this.MiLoadGame.Size = new System.Drawing.Size(180, 22);
             this.MiLoadGame.Text = "Load Game";
             this.MiLoadGame.Click += new System.EventHandler(this.MiLoadGame_Click);
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(158, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(177, 6);
             // 
             // miNew
             // 
             this.miNew.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.miNew.Name = "miNew";
-            this.miNew.Size = new System.Drawing.Size(161, 22);
+            this.miNew.Size = new System.Drawing.Size(180, 22);
             this.miNew.Text = "New";
             this.miNew.Click += new System.EventHandler(this.miNew_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(158, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
             // 
             // miLoadSaveGame
             // 
             this.miLoadSaveGame.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.miLoadSaveGame.Name = "miLoadSaveGame";
-            this.miLoadSaveGame.Size = new System.Drawing.Size(161, 22);
+            this.miLoadSaveGame.Size = new System.Drawing.Size(180, 22);
             this.miLoadSaveGame.Text = "Load Save Game";
             this.miLoadSaveGame.Click += new System.EventHandler(this.miLoadSaveGame_Click);
             // 
             // miSaveGame
             // 
             this.miSaveGame.Name = "miSaveGame";
-            this.miSaveGame.Size = new System.Drawing.Size(161, 22);
+            this.miSaveGame.Size = new System.Drawing.Size(180, 22);
             this.miSaveGame.Text = "Save Game";
             this.miSaveGame.Click += new System.EventHandler(this.miSaveGame_Click_1);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(158, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(177, 6);
             // 
             // miExit
             // 
             this.miExit.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.miExit.Name = "miExit";
-            this.miExit.Size = new System.Drawing.Size(161, 22);
+            this.miExit.Size = new System.Drawing.Size(180, 22);
             this.miExit.Text = "Exit";
             this.miExit.Click += new System.EventHandler(this.miExit_Click);
             // 
@@ -247,6 +247,13 @@
             this.stopRecordingToolStripMenuItem.Text = "Stop Recording";
             this.stopRecordingToolStripMenuItem.Click += new System.EventHandler(this.stopRecordingToolStripMenuItem_Click);
             // 
+            // editRecordedGameToolStripMenuItem
+            // 
+            this.editRecordedGameToolStripMenuItem.Name = "editRecordedGameToolStripMenuItem";
+            this.editRecordedGameToolStripMenuItem.Size = new System.Drawing.Size(214, 22);
+            this.editRecordedGameToolStripMenuItem.Text = "Edit Recorded Game";
+            this.editRecordedGameToolStripMenuItem.Click += new System.EventHandler(this.editRecordedGameToolStripMenuItem_Click);
+            // 
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -258,7 +265,7 @@
             // MiAbout
             // 
             this.MiAbout.Name = "MiAbout";
-            this.MiAbout.Size = new System.Drawing.Size(107, 22);
+            this.MiAbout.Size = new System.Drawing.Size(180, 22);
             this.MiAbout.Text = "About";
             this.MiAbout.Click += new System.EventHandler(this.MiAbout_Click);
             // 
@@ -281,6 +288,7 @@
             this.txtView.ReadOnly = true;
             this.txtView.Size = new System.Drawing.Size(417, 134);
             this.txtView.TabIndex = 3;
+            this.txtView.DoubleClick += new System.EventHandler(this.txtView_DoubleClick);
             this.txtView.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtView_KeyPress);
             // 
             // txtMessages
@@ -292,6 +300,7 @@
             this.txtMessages.ReadOnly = true;
             this.txtMessages.Size = new System.Drawing.Size(417, 134);
             this.txtMessages.TabIndex = 4;
+            this.txtMessages.DoubleClick += new System.EventHandler(this.txtMessages_DoubleClick);
             this.txtMessages.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtMessages_KeyPress);
             // 
             // tableLayoutPanel1
@@ -310,13 +319,6 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.Size = new System.Drawing.Size(423, 307);
             this.tableLayoutPanel1.TabIndex = 5;
-            // 
-            // editRecordedGameToolStripMenuItem
-            // 
-            this.editRecordedGameToolStripMenuItem.Name = "editRecordedGameToolStripMenuItem";
-            this.editRecordedGameToolStripMenuItem.Size = new System.Drawing.Size(214, 22);
-            this.editRecordedGameToolStripMenuItem.Text = "Edit Recorded Game";
-            this.editRecordedGameToolStripMenuItem.Click += new System.EventHandler(this.editRecordedGameToolStripMenuItem_Click);
             // 
             // Form1
             // 

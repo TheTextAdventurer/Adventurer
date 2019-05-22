@@ -63,6 +63,24 @@ namespace AdventurerWIN
 
         #region replay code
 
+        int i = 0;
+        public string GetNextInput()
+        {
+            try
+            {
+                return PlayerInput[i++].Text;
+            }
+            catch
+            {
+                return "end of list";
+            }
+        }
+
+        public void StopReplay()
+        {
+            CarriageReturn.Enabled = StepPlayerInputList.Enabled = false;
+        }
+
         public void StartReplay()
         {
             Playback = true;
