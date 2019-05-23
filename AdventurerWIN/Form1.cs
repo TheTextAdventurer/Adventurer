@@ -236,18 +236,6 @@ namespace AdventurerWIN
         }
 
 
-        private void playRecordedGameToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            using (OpenFileDialog ofd = new OpenFileDialog())
-            {
-                ofd.Filter = "rec files (*.rec)|*.rec";
-                if (ofd.ShowDialog() == DialogResult.OK)
-                {
-                    BeginPlayback(ofd.FileName);
-                }
-            }            
-        }
-
         private void stopRecordingToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (Recorder != null)
@@ -390,6 +378,18 @@ namespace AdventurerWIN
         {
             Properties.Settings.Default.FormSize = this.Size;
             Properties.Settings.Default.Save();
+        }
+
+        private void loadReplayToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog ofd = new OpenFileDialog())
+            {
+                ofd.Filter = "rec files (*.rec)|*.rec";
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    BeginPlayback(ofd.FileName);
+                }
+            }
         }
     }
     /*
